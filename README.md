@@ -158,9 +158,12 @@ The site deploys to Vercel as static files, with no server code.
 1. On vercel.com choose **Add New → Project**, import the GitHub repository
    `aviinashmishra/dairysense` and press **Deploy**. Leave the settings as they are:
    `vercel.json` sets the build itself.
-2. Vercel runs `npm ci`, then `npm run build` (esbuild), then
-   `node deploy/build-site.mjs`. That last step copies only the three pages and the
-   files they load into `site/`, and stops the build if any of them is missing.
+2. Vercel runs `npm ci`, then `deploy/vercel-build.mjs`. That script builds with
+   esbuild, then `deploy/build-site.mjs` copies only the three pages and the files
+   they load into `site/`. The build stops if any of those files is missing.
+   It works with **Root Directory** set to the repository root or to `web`.
+   Vercel often picks `web` because it finds the Next.js app there, and
+   `web/vercel.json` sends that case to the same build.
 3. Every push to `main` redeploys, and pull requests get preview links.
 
 What the deployment adds: short addresses (`/journey`, `/docs`, `/cow-flow`,
@@ -174,8 +177,9 @@ The live link to the real ESP8266 needs plain http, which browsers block on an
 https site. To use **Link device**, open `index.html` from the downloaded project
 folder on a laptop that has joined the DairySense Wi-Fi.
 
-To try the deployed build locally: `npm run build && node deploy/build-site.mjs`,
-then serve `site/` with any static server.
+To try the deployed build locally, run `node deploy/vercel-build.mjs`, then serve
+`site/` with any static server.
 
-The Next.js rebuild in `web/` can be deployed as a second Vercel project with
-**Root Directory** set to `web`.
+The Next.js rebuild in `web/` is not what Vercel deploys. To publish it as a
+separate project, delete `web/vercel.json` in a branch for that project, or
+override its build settings.

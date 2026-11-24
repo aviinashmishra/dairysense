@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "npm ci --prefix .. --no-audit --no-fund",
-  "buildCommand": "node ../deploy/vercel-build.mjs",
+  "installCommand": "if [ -f deploy/vercel-build.mjs ]; then npm ci --no-audit --no-fund; else npm ci --prefix .. --no-audit --no-fund; fi",
+  "buildCommand": "if [ -f deploy/vercel-build.mjs ]; then node deploy/vercel-build.mjs; else node ../deploy/vercel-build.mjs; fi",
   "outputDirectory": "site",
   "cleanUrls": true,
   "trailingSlash": false,
