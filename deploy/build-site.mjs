@@ -7,11 +7,13 @@
 // On Vercel, link-preview tags (og:image, og:url) are made absolute with the
 // production domain, which WhatsApp, LinkedIn and others require.
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = join(ROOT, 'site');
+// --out <dir> picks the output folder (deploy/vercel-build.mjs passes it); the default is ./site at the root
+const outArg = process.argv.indexOf('--out');
+const OUT = outArg > 0 && process.argv[outArg + 1] ? resolve(process.argv[outArg + 1]) : join(ROOT, 'site');
 const PAGES = ['index.html', 'journey.html', 'docs.html'];
 const EXTRAS = { '404.html': 'deploy/404.html', 'robots.txt': 'deploy/robots.txt' };
 
