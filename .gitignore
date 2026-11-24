@@ -1,0 +1,24 @@
+# dependencies (the root project and the Next.js app in web/)
+node_modules/
+
+# build output that is not committed
+site/
+web/.next/
+web/out/
+*.tsbuildinfo
+web/next-env.d.ts
+
+# dist/ IS committed on purpose: the pages open by double-click with no build step.
+
+# Vercel and local tooling
+.vercel/
+.env
+.env.*
+.claude/settings.local.json
+*.log
+npm-debug.log*
+
+# OS clutter
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cow Flow - one day with Gauri | Dairy Sense</title>
+<meta name="description" content="Scroll to walk with Gauri the cow through one whole day on the Sustainable Smart Dairy Farm.">
+<meta name="theme-color" content="#07140f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dairy Sense">
+<meta property="og:title" content="Cow Flow: one day with Gauri the cow">
+<meta property="og:description" content="Scroll to walk with Gauri through one whole day on a sustainable smart dairy farm.">
+<meta property="og:url" content="journey">
+<meta property="og:image" content="src/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="src/assets/og.png">
+<link rel="icon" type="image/png" href="src/assets/icon.png">
+<link rel="stylesheet" href="src/journey/journey.css">
+</head>
+<body>
+<canvas id="scene" aria-label="3D scene: Gauri the cow walking through the smart dairy farm"></canvas>
+<div id="tags" aria-hidden="true"></div>
+<div id="fade" aria-hidden="true"></div>
+
+<header id="bar">
+  <nav class="site-nav" aria-label="Dairy Sense pages">
+    <a class="brand" href="index.html"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 3C9 3 4 9 4 15c0 1.6.4 3 1 4.200C7.500 13 12 9.500 17 8c-4 2.500-7.500 6.500-9.300 12.400.9.400 2 .6 3.300.6 6 0 10-5 9-18z"/></svg></span><b>Dairy Sense</b></a>
+    <a href="index.html">Live twin</a>
+    <a href="journey.html" class="on" aria-current="page">Cow Flow</a>
+    <a href="docs.html">Docs</a>
+  </nav>
+  <div class="clock" title="Farm time at this point of the walk">
+    <b id="clock">05:00</b>
+    <div><small id="phase">before dawn</small><div class="arc"><i id="sunDot"></i></div></div>
+  </div>
+  <div class="tools">
+    <div class="seg" role="group" aria-label="Weather for this day">
+      <button data-weather="sunny" class="on">Sunny</button><button data-weather="cloudy">Cloudy</button><button data-weather="rain">Rain</button>
+    </div>
+    <button id="btnHeat" class="pill" title="Adds 8 &deg;C to the whole day and re-runs the farm engine">Heat wave</button>
+  </div>
+</header>
+<p id="alert" role="status" hidden></p>
+
+<aside id="beltPanel" aria-label="Live readings from Gauri's health belt">
+  <header><span class="avatar" aria-hidden="true"></span><div><b>Gauri</b><small>DS-01 &middot; HF cross</small></div></header>
+  <span id="aiChip" class="chip good">&#10004; Healthy</span>
+  <div id="vitals"></div>
+  <p id="doing"></p>
+  <p class="src">Health belt &middot; live</p>
+</aside>
+
+<main>
+  <header class="hero">
+    <p class="eyebrow">Cow Flow &middot; Sustainable Smart Dairy Farm</p>
+    <h1>One day<br>with Gauri</h1>
+    <p class="sub">Scroll, and she walks you through the whole farm, step by step: milk, water, sun, dung, gas, fodder, and home again.</p>
+    <button id="hint" type="button">Scroll to start her day <span aria-hidden="true">&darr;</span></button>
+  </header>
+  <div id="track"></div>
+  <footer class="foot">
+    <p><b>Dairy Sense</b> &middot; National Milk Day 2026 &middot; United University, Prayagraj</p>
+    <p>Time is compressed and the quantities are model values from the farm engine, not field measurements. <a href="docs.html#limits">What is and is not real</a></p>
+  </footer>
+</main>
+
+<nav id="timeline" aria-label="Stops of the day"></nav>
+<div id="loading"><p>Waking the farm&hellip;</p></div>
+<noscript><p style="position:fixed;inset:0;z-index:99;display:grid;place-items:center;margin:0;padding:24px;background:#0b1410;color:#f3f7ef;font:18px 'Segoe UI',sans-serif;text-align:center">Cow Flow is an interactive 3D page and needs JavaScript switched on. The same material is written out in docs.html.</p></noscript>
+<script src="dist/journey.js"></script>
+</body>
+</html>

@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentation | Dairy Sense</title>
+<meta name="description" content="How the Dairy Sense smart dairy farm works: the physical model, the 3D digital twin, the hardware, and how to present it.">
+<meta name="theme-color" content="#07140f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dairy Sense">
+<meta property="og:title" content="Dairy Sense documentation">
+<meta property="og:description" content="How the smart dairy farm works: the physical model, the 3D twin, the ESP8266 hardware and how to present it.">
+<meta property="og:url" content="docs">
+<meta property="og:image" content="src/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="src/assets/og.png">
+<link rel="icon" type="image/png" href="src/assets/icon.png">
+<link rel="stylesheet" href="src/docs.css">
+</head>
+<body>
+<a class="skip" href="#overview">Skip to the documentation</a>
+
+<nav class="site-nav" aria-label="Dairy Sense pages">
+  <a class="brand" href="index.html"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 3C9 3 4 9 4 15c0 1.6.4 3 1 4.200C7.500 13 12 9.500 17 8c-4 2.500-7.500 6.500-9.300 12.400.9.400 2 .6 3.300.6 6 0 10-5 9-18z"/></svg></span><b>Dairy Sense</b></a>
+  <a href="index.html">Live twin</a>
+  <a href="journey.html">Cow Flow</a>
+  <a href="docs.html" class="on" aria-current="page">Docs</a>
+</nav>
+
+<!-- arrow heads shared by every diagram on the page -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#3c5244"/></marker>
+</defs></svg>
+
+<div class="shell">
+<aside class="sidebar" id="sidebar" aria-label="Contents">
+  <div class="search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.500 15.500L21 21"/></svg>
+    <label class="sr" for="tocSearch">Search the documentation</label>
+    <input id="tocSearch" type="search" placeholder="Search the docs" autocomplete="off" spellcheck="false">
+    <kbd aria-hidden="true">/</kbd>
+  </div>
+  <p class="toc-note" id="tocNote" role="status"></p>
+  <ol class="toc" id="toc">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#quick-start">Quick start</a></li>
+    <li><a href="#loops">The five loops</a></li>
+    <li><a href="#day">A farm day, hour by hour</a></li>
+    <li><a href="#shed">Farm base and cow shed</a></li>
+    <li><a href="#solar">Solar energy</a></li>
+    <li><a href="#water">Water recycling</a></li>
+    <li><a href="#monitoring">Smart monitoring</a></li>
+    <li><a href="#gate">Animal detection gate</a></li>
+    <li><a href="#belt">AI health belt</a></li>
+    <li><a href="#gps">GPS tracking and virtual fence</a></li>
+    <li><a href="#biogas">Biogas, compost and fodder</a></li>
+    <li><a href="#score">KPIs and the farm score</a></li>
+    <li><a href="#hardware">Hardware: build and flash</a></li>
+    <li><a href="#api">Device API</a></li>
+    <li><a href="#demo-script">Five-minute demo script</a></li>
+    <li><a href="#viva">Viva questions</a></li>
+    <li><a href="#develop">Develop and extend</a></li>
+    <li><a href="#glossary">Glossary</a></li>
+    <li><a href="#limits">Limits and honesty</a></li>
+  </ol>
+</aside>
+
+<main id="main">
+<header class="hero">
+  <p class="eyebrow">Documentation · National Milk Day 2026</p>
+  <h1>Dairy Sense</h1>
+  <p class="lede">A Sustainable Smart Dairy Farm, built twice: once as a 3 × 2 ft tabletop model, and once as a living 3D digital twin that runs the whole farm in your browser. This page explains every part of both, how to operate them, how to wire the electronics, and how to present the project.</p>
+  <ul class="credits">
+    <li><b>Presented by</b> Siddhi Keshari, Vaibhav Laxmi Pandey, Sakshi Devi, Tanu Yadav, Arya Gupta</li>
+    <li><b>College</b> United University, Prayagraj</li>
+  </ul>
+  <noscript><p class="noscript">JavaScript is switched off, so the live charts, the calculators and the search box on this page will not appear. All of the text, tables and diagrams still work.</p></noscript>
+</header>
+
+<!-- ============================================================ 1 -->
+<section id="overview">
+<h2>Overview</h2>
+<p>A normal dairy farm buys electricity, pumps fresh water for every wash, throws dung on a heap and notices a sick animal only when she stops eating. <strong>Dairy Sense shows a farm where each of those problems is solved by connecting it to another part of the farm.</strong> The sun runs the pump. The wash water is filtered and used again. Sensors watch the shed and every animal. The dung becomes cooking gas, backup electricity, compost and, in the end, the fodder the animals eat.</p>
+<p>The project has two halves that tell the same story:</p>
+<div class="pair">
+  <div><h4>The physical model</h4><p>A 3 × 2 ft board with a cardboard shed, a mini solar panel and battery, two water tanks with a filter and pump, a DHT11 temperature and humidity sensor, an ESP8266 Wi-Fi board, an L293D motor driver, an LCD and an IR sensor at the gate.</p></div>
+  <div><h4>The digital twin</h4><p>The same board in 3D, with five animals living a full day every two minutes. A farm engine works out the energy, water, climate, herd behaviour, health-belt readings, GPS positions, biogas, compost and fodder, and a phone app on screen shows what the farmer would see.</p></div>
+</div>
+<p>The numbers below are not typed into this page. They are worked out in your browser, right now, by the same farm engine the twin uses, for one sunny day from midnight to midnight.</p>
+<div class="tiles" id="heroTiles" data-fig="day" aria-label="Totals for one simulated sunny day"></div>
+<p class="tiles-note">One recorded sunny farm day. These are illustrative model values, not field measurements. See <a href="#limits">Limits and honesty</a>.</p>
+<div class="jump">
+  <a href="index.html#step=intro">See it in the live twin</a>
+  <a class="cow" href="journey.html#wake">Walk it with Gauri</a>
+</div>
+<h3 id="overview-reading">How to read this page</h3>
+<ul>
+  <li><strong>Presenting tomorrow?</strong> Read <a href="#quick-start">Quick start</a>, then <a href="#demo-script">the five-minute demo script</a> and <a href="#viva">the viva questions</a>.</li>
+  <li><strong>Want to understand the farm?</strong> Read <a href="#loops">The five loops</a> and <a href="#day">A farm day</a>, then the section for each subsystem.</li>
+  <li><strong>Building the electronics?</strong> Go to <a href="#hardware">Hardware</a> and <a href="#api">Device API</a>.</li>
+  <li><strong>Changing the code?</strong> Go to <a href="#develop">Develop and extend</a>.</li>
+</ul>
+<p>Boxes like these appear throughout:</p>
+<div class="callout model"><p>What the part is on the tabletop model.</p></div>
+<div class="callout twin"><p>How the twin simulates it, with the real numbers from the code.</p></div>
+<div class="callout try"><p>Something to click so you can see it happen.</p></div>
+<div class="callout note"><p>A caution, or a fact that is easy to get wrong.</p></div>
+</section>
+
+<!-- ============================================================ 2 -->
+<section id="quick-start">
+<h2>Quick start</h2>
+<p>Nothing needs to be installed and no internet is needed. Open the project folder and double-click a page. Use a recent Chrome, Edge or Firefox. The 3D pages need WebGL, which every normal laptop has.</p>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Page</th><th>File</th><th>What it is for</th></tr></thead>
+  <tbody>
+    <tr><th><a href="index.html">Live twin</a></th><td><code>index.html</code></td><td>The 3D board, running live. You control time and weather, take the guided tour, open the farmer's phone app and make things go wrong on purpose.</td></tr>
+    <tr><th><a href="journey.html">Cow Flow</a></th><td><code>journey.html</code></td><td>A scroll-driven walk. You follow one cow, Gauri, through a whole farm day in 13 stops. Good for explaining the story to someone in order.</td></tr>
+    <tr><th><a href="docs.html">Docs</a></th><td><code>docs.html</code></td><td>This page.</td></tr>
+  </tbody>
+</table></div>
+
+<h3 id="qs-twin">The live twin</h3>
+<p>The page opens before dawn with the farm asleep. Press <b>Wake the farm</b> (or Enter): the camera visits the controller, solar, water, biogas and the herd while each reports its live reading and the sun comes up. <b>Skip to the menu</b> (or Esc) goes straight to the choices. Then choose <b>Start the guided tour</b> for the 11-stop story, <b>Explore freely</b>, Cow Flow, the docs, or one of the five animals to open her health belt. Drag to orbit the board, scroll to zoom, and click any animal to open her record.</p>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Top bar control</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><th>Clock</th><td>Farm time and the day number. One farm hour takes 5 seconds at 1x, so a day takes two minutes.</td></tr>
+    <tr><th>Pause · 1x · 4x · 12x</th><td>Speed of time. At 12x a farm day takes 10 seconds.</td></tr>
+    <tr><th>Sunny · Cloudy · Rain</th><td>Weather. Clouds cut solar output to 36 %, rain to 14 %. Rain also fills the collection tank from the roof gutter.</td></tr>
+    <tr><th>Heat wave</th><td>Adds 8 °C to the weather.</td></tr>
+    <tr><th>Skip to night / Skip to morning</th><td>A short time-lapse to 20:42, or to 09:00 if it is already night.</td></tr>
+    <tr><th>Flows</th><td>Lights up every loop with moving coloured beads.</td></tr>
+    <tr><th>GPS</th><td>Shows GPS trails, locator beams, the geofence and the virtual fence on the board.</td></tr>
+    <tr><th>Labels</th><td>Shows or hides the floating labels. Clicking a label jumps to that stop of the tour.</td></tr>
+    <tr><th>Guided tour</th><td>Opens or closes the story card on the left.</td></tr>
+    <tr><th>Link device</th><td>Connects the twin to the real ESP8266 on the physical model. See <a href="#hw-link">Linking the twin</a>.</td></tr>
+    <tr><th>Cow Flow · Docs</th><td>Open the other two pages.</td></tr>
+    <tr><th>Full screen</th><td>Useful on a projector.</td></tr>
+  </tbody>
+</table></div>
+<p>The <strong>phone app</strong> on the right is what the farmer would carry. It has four tabs:</p>
+<ul>
+  <li><b>Farm</b>: shed climate and THI, energy, the three water levels with the pump control (Auto or Manual, and an ON/OFF button), biogas and fodder, and the gate counter.</li>
+  <li><b>Herd</b>: one row per animal with her AI status. Tap one for her full record: health score, vitals with 24-hour charts, GPS movement, herd register, health record, and buttons to make her ill for a demonstration. <b>Download report</b> saves a CSV file. The <b>Coats / Health / Thermal</b> switch changes how the herd is coloured.</li>
+  <li><b>Map</b>: the live GPS map. See <a href="#gps">GPS tracking</a>.</li>
+  <li><b>Alerts</b>: everything the farm has told the farmer, newest first.</li>
+</ul>
+<p>The strip along the bottom shows five numbers: water reused, renewable power, biogas made, milk today and the <a href="#score">farm score</a>.</p>
+
+<h3 id="qs-keys">Keyboard shortcuts</h3>
+<div class="table-wrap"><table class="mid keys">
+  <thead><tr><th>Key</th><th>Live twin</th><th>Cow Flow</th><th>This page</th></tr></thead>
+  <tbody>
+    <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Previous or next stop of the tour (when the tour is open)</td><td>Previous or next stop of the day</td><td>Move the crosshair when a chart has focus (<kbd>Shift</kbd> moves faster)</td></tr>
+    <tr><td><kbd>PageUp</kbd> <kbd>PageDown</kbd></td><td></td><td>Previous or next stop</td><td></td></tr>
+    <tr><td><kbd>Space</kbd></td><td>Pause or resume</td><td></td><td></td></tr>
+    <tr><td><kbd>F</kbd></td><td>Show all flows</td><td></td><td></td></tr>
+    <tr><td><kbd>G</kbd></td><td>Show the GPS layer</td><td></td><td></td></tr>
+    <tr><td><kbd>L</kbd></td><td>Show or hide labels</td><td></td><td></td></tr>
+    <tr><td><kbd>C</kbd></td><td>Change the herd colours: coats, health, thermal</td><td></td><td></td></tr>
+    <tr><td><kbd>/</kbd></td><td></td><td></td><td>Jump to the search box</td></tr>
+  </tbody>
+</table></div>
+
+<h3 id="qs-tour">The guided tour</h3>
+<p>The tour has 11 stops, in the order the resources flow through the farm. Each stop moves the camera, explains one part and offers buttons that make it do something. Tick <b>Auto-play the tour</b> to let it run by itself: it stays 16 seconds on each stop (26 on the health belt) and presses the demonstration button for you after 4 seconds.</p>
+<div class="table-wrap"><table class="wide">
+  <thead><tr><th>Stop</th><th>Title</th><th>Buttons on the card</th><th>Read more</th></tr></thead>
+  <tbody>
+    <tr><td class="n">1</td><td>Introduction</td><td></td><td><a href="#overview">Overview</a></td></tr>
+    <tr><td class="n">2</td><td>Farm Base and Cow Shed</td><td>Skip to milking time · Wash the shed</td><td><a href="#shed">Shed</a></td></tr>
+    <tr><td class="n">3</td><td>Solar Energy System</td><td>Skip to night · Make it cloudy · Back to a sunny day</td><td><a href="#solar">Solar</a></td></tr>
+    <tr><td class="n">4</td><td>Water Recycling System</td><td>Wash the shed · Make it rain · Back to a sunny day</td><td><a href="#water">Water</a></td></tr>
+    <tr><td class="n">5</td><td>Smart Monitoring</td><td>Start a heat wave · Switch the pump by hand · Back to a sunny day</td><td><a href="#monitoring">Monitoring</a></td></tr>
+    <tr><td class="n">6</td><td>Animal Detection System</td><td>Call the herd in for milking</td><td><a href="#gate">Gate</a></td></tr>
+    <tr><td class="n">7</td><td>AI Smart Cow Health Belt</td><td>Give this cow a fever · Simulate heat (estrus) · Make her lame · Call the vet · Thermal view on / off</td><td><a href="#belt">Belt</a></td></tr>
+    <tr><td class="n">8</td><td>GPS Tracking and Virtual Fence</td><td>Leave the side gate open · Guide her back · Move the herd to the other cell</td><td><a href="#gps">GPS</a></td></tr>
+    <tr><td class="n">9</td><td>Biogas and Compost</td><td>Fast-forward one day</td><td><a href="#biogas">Biogas</a></td></tr>
+    <tr><td class="n">10</td><td>How Everything Connects</td><td></td><td><a href="#loops">Loops</a></td></tr>
+    <tr><td class="n">✓</td><td>Thank You!</td><td>Shows the session totals</td><td><a href="#score">Score</a></td></tr>
+  </tbody>
+</table></div>
+
+<h3 id="qs-journey">Cow Flow</h3>
+<p>Cow Flow tells the same story from the animal's side. Scroll the page and Gauri, the Holstein-Friesian cross with tag DS-01, walks from stop to stop. The sun, the machines and every reading on screen follow a recording of that hour made by the farm engine, so the page shows what the simulation actually did, not a script.</p>
+<ul>
+  <li><strong>Scroll</strong> to move through the day. <kbd>←</kbd> <kbd>→</kbd> or <kbd>PageUp</kbd> <kbd>PageDown</kbd> step between stops.</li>
+  <li><strong>The dots along the bottom</strong> are the 13 stops with their times. Click one to jump there.</li>
+  <li><strong>Sunny · Cloudy · Rain</strong> and <strong>Heat wave</strong> at the top re-record the whole day in that weather, and every reading on the page changes with it.</li>
+  <li><strong>The panel on the side</strong> shows Gauri's health-belt readings at that moment.</li>
+  <li>Each card has two links: <b>Open this in the live twin</b> and <b>How it works</b>, which brings you back to the matching section here.</li>
+</ul>
+<p>The 13 stops, each linked:</p>
+<ul class="chips stages">
+  <li><a href="journey.html#wake">1 · Before sunrise</a></li>
+  <li><a href="journey.html#belt">2 · The AI health belt</a></li>
+  <li><a href="journey.html#milk">3 · Morning milking</a></li>
+  <li><a href="journey.html#wash">4 · Washing water</a></li>
+  <li><a href="journey.html#gate">5 · The gate that counts</a></li>
+  <li><a href="journey.html#solar">6 · Power from the sun</a></li>
+  <li><a href="journey.html#graze">7 · Out on the paddock</a></li>
+  <li><a href="journey.html#dung">8 · Nothing is thrown away</a></li>
+  <li><a href="journey.html#biogas">9 · Dung becomes gas</a></li>
+  <li><a href="journey.html#heat">10 · The hottest hour</a></li>
+  <li><a href="journey.html#fodder">11 · Her waste grows her food</a></li>
+  <li><a href="journey.html#home">12 · Home for the evening</a></li>
+  <li><a href="journey.html#night">13 · Night, and the day's account</a></li>
+</ul>
+</section>
+
+<!-- ============================================================ 3 -->
+<section id="loops">
+<h2>The five loops</h2>
+<p>The whole idea of the project fits in one sentence: <strong>nothing on this farm is used once.</strong> Each resource travels round a loop, and each loop hands something to the next one.</p>
+<figure class="fig">
+<div class="diagram"><svg class="dg" viewBox="0 0 860 500" role="img" aria-labelledby="loopT loopD">
+  <title id="loopT">The five loops of the farm</title>
+  <desc id="loopD">Four loops form a ring. Energy runs the pump of the water loop. Water irrigates the fodder loop. The fodder loop feeds the herd, whose dung starts the waste and gas loop. Biogas from that loop backs up the battery of the energy loop. The data loop sits in the middle, measuring and switching the other four.</desc>
+  <!-- ring arrows -->
+  <path class="e" marker-end="url(#ah)" d="M340 84H518"/>
+  <path class="e" marker-end="url(#ah)" d="M680 148V350"/>
+  <path class="e" marker-end="url(#ah)" d="M520 416H342"/>
+  <path class="e" marker-end="url(#ah)" d="M180 352V150"/>
+  <text class="lbl" x="430" y="74" text-anchor="middle">electricity runs the pump</text>
+  <text class="lbl" x="670" y="166" text-anchor="end">water irrigates</text>
+  <text class="lbl" x="670" y="180" text-anchor="end">the fodder plot</text>
+  <text class="lbl" x="430" y="406" text-anchor="middle">the fed herd gives milk and dung</text>
+  <text class="lbl" x="190" y="332" text-anchor="start">biogas backs up</text>
+  <text class="lbl" x="190" y="346" text-anchor="start">the battery</text>
+  <!-- spokes from data -->
+  <path class="e" marker-end="url(#ah)" marker-start="url(#ah)" d="M300 184V150"/>
+  <path class="e" marker-end="url(#ah)" marker-start="url(#ah)" d="M560 184V150"/>
+  <path class="e" marker-end="url(#ah)" marker-start="url(#ah)" d="M560 316V350"/>
+  <path class="e" marker-end="url(#ah)" marker-start="url(#ah)" d="M300 316V350"/>
+  <!-- 1 energy -->
+  <rect class="n" x="20" y="20" width="320" height="128" rx="12"/><rect class="bar" x="20" y="20" width="9" height="128" rx="4" fill="#f2b632"/>
+  <text class="h" x="44" y="46">1 · Energy</text>
+  <text x="44" y="70">Sun → solar panel (800 W at noon)</text>
+  <text x="44" y="88">→ battery (3 kWh)</text>
+  <text x="44" y="106">→ lights, pump, fans, milk chiller,</text>
+  <text x="44" y="124">rover and electronics</text>
+  <!-- 2 water -->
+  <rect class="n" x="520" y="20" width="320" height="128" rx="12"/><rect class="bar" x="520" y="20" width="9" height="128" rx="4" fill="#3aa0e0"/>
+  <text class="h" x="544" y="46">2 · Water</text>
+  <text x="544" y="70">Shed wash water + roof rain</text>
+  <text x="544" y="88">→ collection tank → filter → pump</text>
+  <text x="544" y="106">→ storage tank → shed wash, cooling</text>
+  <text x="544" y="124">foggers and fodder irrigation</text>
+  <!-- 3 fodder -->
+  <rect class="n" x="520" y="352" width="320" height="128" rx="12"/><rect class="bar" x="520" y="352" width="9" height="128" rx="4" fill="#8fd14f"/>
+  <text class="h" x="544" y="378">3 · Fodder</text>
+  <text x="544" y="402">Digester slurry → compost</text>
+  <text x="544" y="420">→ fodder plot → harvest → feed store</text>
+  <text x="544" y="438">→ feed trough → the herd</text>
+  <text x="544" y="456">(milk out, dung out)</text>
+  <!-- 4 waste -->
+  <rect class="n" x="20" y="352" width="320" height="128" rx="12"/><rect class="bar" x="20" y="352" width="9" height="128" rx="4" fill="#8b5a2b"/>
+  <text class="h" x="44" y="378">4 · Waste and gas</text>
+  <text x="44" y="402">Dung → collector rover → inlet</text>
+  <text x="44" y="420">→ digester → gas holder (3 m³)</text>
+  <text x="44" y="438">→ kitchen stove and 800 W generator;</text>
+  <text x="44" y="456">the slurry goes on to loop 3</text>
+  <!-- 5 data -->
+  <rect class="n2" x="290" y="186" width="280" height="128" rx="12"/><rect class="bar" x="290" y="186" width="9" height="128" rx="4" fill="#35c46b"/>
+  <text class="h" x="314" y="212">5 · Data</text>
+  <text x="314" y="236">DHT11, IR gate, health belts with GPS</text>
+  <text x="314" y="254">→ controller + LCD → ESP8266 Wi-Fi</text>
+  <text x="314" y="272">→ phone app. It switches the pump,</text>
+  <text x="314" y="290">fans and foggers, and raises alerts</text>
+</svg></div>
+<figcaption>The coloured edge of each box is the bead colour the twin uses for that loop when you press <b>Flows</b>. Biogas is part of the waste loop but has its own orange beads, so you will count six bead colours for five loops; the twin's tour says the same.</figcaption>
+</figure>
+<div class="table-wrap"><table class="wide">
+  <thead><tr><th>Loop</th><th>What goes round</th><th>What it hands on</th><th>Section</th></tr></thead>
+  <tbody>
+    <tr><th><i class="swatch" style="background:#f2b632"></i>Energy</th><td>Sunlight becomes electricity, is stored in the battery and is spent by the loads.</td><td>Power for the pump (water loop) and for the sensors and Wi-Fi (data loop).</td><td><a href="#solar">Solar</a></td></tr>
+    <tr><th><i class="swatch" style="background:#3aa0e0"></i>Water</th><td>Used wash water and rain are collected, filtered, pumped up and used again.</td><td>Water to wash the shed, cool the herd, and irrigate the fodder plot (fodder loop).</td><td><a href="#water">Water</a></td></tr>
+    <tr><th><i class="swatch" style="background:#8fd14f"></i>Fodder</th><td>Compost feeds the soil, the soil grows fodder, the fodder feeds the herd.</td><td>Milk, and dung (waste loop).</td><td><a href="#biogas">Biogas</a></td></tr>
+    <tr><th><i class="swatch" style="background:#8b5a2b"></i>Waste and gas</th><td>Dung is collected and digested into biogas and slurry.</td><td>Cooking gas, backup electricity when the battery is low (energy loop), and slurry for compost (fodder loop).</td><td><a href="#biogas">Biogas</a></td></tr>
+    <tr><th><i class="swatch" style="background:#35c46b"></i>Data</th><td>Sensor readings travel to the controller, over Wi-Fi to the phone, and decisions travel back.</td><td>It decides when the pump, fans and foggers run, and tells the farmer when an animal needs help.</td><td><a href="#monitoring">Monitoring</a>, <a href="#belt">Belt</a>, <a href="#gps">GPS</a></td></tr>
+  </tbody>
+</table></div>
+<div class="jump">
+  <a href="index.html#step=connect">See it in the live twin</a>
+  <a class="cow" href="journey.html#home">Walk it with Gauri</a>
+</div>
+</section>
+
+<!-- ============================================================ 4 -->
+<section id="day">
+<h2>A farm day, hour by hour</h2>
+<p>The farm follows a fixed daily routine. The table gives the times that are written into the engine. The charts under it show what those rules add up to over one day.</p>
+<div class="table-wrap"><table class="wide">
+  <thead><tr><th>Time</th><th>What happens</th><th>What it sets off</th></tr></thead>
+  <tbody>
+    <tr><td class="n">20:30 to 05:30</td><td>Night. The herd lies in the shed and ruminates.</td><td>Lights are on from the battery. An animal goes to drink only if she is very thirsty.</td></tr>
+    <tr><td class="n">05:42</td><td>The feed trough is filled to 50 kg from the feed store.</td><td>If the store is short, the rest is counted as bought feed.</td></tr>
+    <tr><td class="n">05:45</td><td>The herd walks to the feed trough for milking.</td><td>Animals in the paddock cross the IR gate on the way in.</td></tr>
+    <tr><td class="n">06:00</td><td>Sunrise. Morning milking, until 07:00.</td><td>The solar panel starts to produce. Lights go off at about 06:15.</td></tr>
+    <tr><td class="n">06:30 to 09:30</td><td>Morning irrigation window.</td><td>The fodder plot is watered only if its soil moisture is under 45 %.</td></tr>
+    <tr><td class="n">07:00</td><td>Milk is counted and sent to the chiller. The shed wash starts and runs for one hour.</td><td>The chiller runs for 3 hours. 150 L of stored water is used and 85 % of it drains to the collection tank. The stove burns until 08:12.</td></tr>
+    <tr><td class="n">about 07:40</td><td>The collection tank passes 110 L.</td><td>The pump starts and sends the water through the filter to the storage tank.</td></tr>
+    <tr><td class="n">07:00 to 16:45</td><td>The herd grazes, rests, drinks and feeds in the paddock.</td><td>Dung pats are dropped and the rover collects them. The belts report every 15 minutes.</td></tr>
+    <tr><td class="n">08:30</td><td>Compost is spread on the fodder plot, if at least 12 kg is ready.</td><td>Soil fertility rises, so the fodder grows faster.</td></tr>
+    <tr><td class="n">09:00</td><td>The herd register is checked.</td><td>A reminder is raised for any vaccination or deworming due today or tomorrow.</td></tr>
+    <tr><td class="n">11:00</td><td>The feed trough is filled again.</td><td></td></tr>
+    <tr><td class="n">12:00</td><td>Solar noon.</td><td>The panel is at its peak: 800 W on a sunny day.</td></tr>
+    <tr><td class="n">12:24 to 13:24</td><td>The stove burns for the midday meal.</td><td>Gas is drawn from the holder.</td></tr>
+    <tr><td class="n">15:00</td><td>The hottest hour.</td><td>THI is at its daily peak. In a heat wave the fans and foggers are already running.</td></tr>
+    <tr><td class="n">16:00 to 18:30</td><td>Evening irrigation window.</td><td></td></tr>
+    <tr><td class="n">16:36</td><td>The feed trough is filled for the evening.</td><td></td></tr>
+    <tr><td class="n">16:45</td><td>The herd walks in for evening milking.</td><td></td></tr>
+    <tr><td class="n">17:00 to 18:00</td><td>Evening milking. Sunset at 18:00.</td><td>Lights come on at about 17:45. At 18:00 the milk is counted, the chiller starts and the shed is washed again.</td></tr>
+    <tr><td class="n">19:00 to 20:12</td><td>The stove burns for the evening meal.</td><td></td></tr>
+    <tr><td class="n">20:30</td><td>The herd settles for the night.</td><td></td></tr>
+  </tbody>
+</table></div>
+<p>Three things have no fixed time. The <strong>digester</strong> works all day and night. The <strong>biogas generator</strong> starts whenever the gas holder is nearly full or the battery is low. The <strong>cooling</strong> starts whenever the shed gets too hot.</p>
+
+<h3 id="day-recorded">One recorded day</h3>
+<p>This figure runs the farm engine in your browser for one day and draws what happened. Move the pointer across it to read any moment. Change the weather and the engine records the day again.</p>
+<figure class="fig" data-fig="day">
+  <div class="controls">
+    <span class="lbl" id="dayWlbl">Weather</span>
+    <div class="seg" role="group" aria-labelledby="dayWlbl" id="dayWeather">
+      <button type="button" data-w="sunny" aria-pressed="true">Sunny</button><button type="button" data-w="cloudy" aria-pressed="false">Cloudy</button><button type="button" data-w="rain" aria-pressed="false">Rain</button>
+    </div>
+    <label class="check"><input type="checkbox" id="dayHeat"> Heat wave (+8 °C)</label>
+  </div>
+  <p class="status-line" id="dayStatus" role="status"></p>
+  <div class="tiles small" id="dayTiles" aria-label="Totals for this recorded day"></div>
+  <div class="charts" id="dayCharts" tabindex="0" role="group" aria-label="Charts of one recorded farm day. Use the left and right arrow keys to read values through the day."></div>
+  <ol class="events" id="dayEvents" aria-label="Events during this day"></ol>
+  <details class="tableview"><summary>Show these numbers as a table</summary><div class="table-wrap" id="dayTable"></div></details>
+  <figcaption>The day runs from midnight to midnight and is the first full day after the twin opens. Grey bands are night. Each chart has its own scale, so compare shapes and timing between charts, not heights. The heat wave is switched on at midnight, which is why the temperature climbs in the first hours.</figcaption>
+</figure>
+<div class="callout try"><p>Choose <b>Rain</b>. The collection tank fills from the roof, the pump runs for hours and the storage tank ends the day nearly full, while solar power drops to 14 % and the biogas generator has to help the battery. Then choose <b>Sunny</b> with <b>Heat wave</b>: the cooling row lights up and the shed THI line separates from the paddock line.</p></div>
+<div class="jump">
+  <a href="index.html#step=intro">See it in the live twin</a>
+  <a class="cow" href="journey.html#wake">Walk it with Gauri</a>
+</div>
+</section>
+
+<!-- ============================================================ 5 -->
+<section id="shed">
+<h2>Farm base and cow shed</h2>
+<p>Everything stands on one board, 3 ft wide and 2 ft deep. The shed is at the back left, with the paddock in front of it. The water system, the solar panel and the battery are along the back. The biogas plant and the fodder plot are at the front right.</p>
+<figure class="fig">
+<div class="diagram"><svg class="dg" viewBox="0 0 760 520" role="img" aria-labelledby="mapT mapD">
+  <title id="mapT">Plan of the model board</title>
+  <desc id="mapD">Top view of the 36 by 24 inch board. The cow shed is at the back left, the paddock in front of it split into a west and an east grazing cell. Water tanks, filter, pump, solar panel and battery are along the back. The digester, stove, generator, compost bay and fodder plot are at the front right. Numbers match the list below.</desc>
+  <rect x="20" y="20" width="720" height="480" rx="6" fill="#f1f6ea" stroke="#b9c7b6" stroke-width="1.5"/>
+  <rect x="48" y="192" width="300" height="276" fill="#dcedc4" stroke="#b9c7b6" stroke-width="1.5"/>
+  <rect x="48" y="192" width="300" height="72" fill="#e9f2dc"/>
+  <path class="dash" d="M198 264V468"/>
+  <rect x="60" y="50" width="240" height="130" fill="#ebe1d0" stroke="#b9a88c" stroke-width="1.5"/>
+  <rect x="76" y="58" width="124" height="12" rx="3" fill="#b88a55"/>
+  <rect x="226" y="58" width="58" height="12" rx="3" fill="#3aa0e0"/>
+  <rect x="150" y="182" width="60" height="14" rx="3" fill="#fff" stroke="#3c5244" stroke-width="1.5"/>
+  <rect x="343" y="272" width="10" height="36" rx="3" fill="#fff" stroke="#3c5244" stroke-width="1.5"/>
+  <rect x="628" y="280" width="92" height="212" fill="#cfe6b0" stroke="#b9c7b6" stroke-width="1.5"/>
+  <text class="area" x="180" y="132" text-anchor="middle">Cow shed</text>
+  <text class="area" x="110" y="234" text-anchor="middle">Gate lane</text>
+  <text class="area" x="123" y="380" text-anchor="middle">West cell</text>
+  <text class="area" x="273" y="420" text-anchor="middle">East cell</text>
+  <text class="area" x="674" y="400" text-anchor="middle">Fodder plot</text>
+  <text class="s" x="30" y="494">Back of the board is at the top. 36 × 24 inches.</text>
+  <g class="num">
+    <circle cx="84" cy="160" r="10"/><text x="84" y="164">1</text>
+    <circle cx="138" cy="90" r="10"/><text x="138" y="94">2</text>
+    <circle cx="255" cy="90" r="10"/><text x="255" y="94">3</text>
+    <circle cx="230" cy="189" r="10"/><text x="230" y="193">4</text>
+    <circle cx="66" cy="212" r="10"/><text x="66" y="216">5</text>
+    <circle cx="198" cy="300" r="10"/><text x="198" y="304">6</text>
+    <circle cx="370" cy="290" r="10"/><text x="370" y="294">7</text>
+    <circle cx="360" cy="74" r="10"/><text x="360" y="78">8</text>
+    <circle cx="418" cy="74" r="10"/><text x="418" y="78">9</text>
+    <circle cx="452" cy="74" r="10"/><text x="452" y="78">10</text>
+    <circle cx="478" cy="132" r="10"/><text x="478" y="136">11</text>
+    <circle cx="624" cy="88" r="10"/><text x="624" y="92">12</text>
+    <circle cx="546" cy="148" r="10"/><text x="546" y="152">13</text>
+    <circle cx="432" cy="228" r="10"/><text x="432" y="232">14</text>
+    <circle cx="322" cy="352" r="10"/><text x="322" y="356">15</text>
+    <circle cx="398" cy="352" r="10"/><text x="398" y="356">16</text>
+    <circle cx="488" cy="376" r="10"/><text x="488" y="380">17</text>
+    <circle cx="572" cy="328" r="10"/><text x="572" y="332">18</text>
+    <circle cx="584" cy="212" r="10"/><text x="584" y="216">19</text>
+    <circle cx="576" cy="436" r="10"/><text x="576" y="440">20</text>
+    <circle cx="674" cy="300" r="10"/><text x="674" y="304">21</text>
+  </g>
+</svg></div>
+<ol class="maplist">
+  <li>Cow shed</li><li>Feed trough</li><li>Drinking trough</li><li>IR gate</li><li>Paddock</li><li>Virtual fence between the two grazing cells</li><li>Side gate</li>
+  <li>Collection tank</li><li>Filter</li><li>Pump</li><li>Storage tank</li><li>Solar panel</li><li>Battery</li><li>Monitoring kiosk: controller, LCD, ESP8266</li>
+  <li>Rover dock</li><li>Dung inlet</li><li>Digester</li><li>Stove</li><li>Biogas generator</li><li>Compost bay</li><li>Fodder plot</li>
+</ol>
+<figcaption>Positions are taken from <code>src/layout.js</code>, where one unit is one inch on the board.</figcaption>
+</figure>
+<div class="callout model"><p>Green grass sheet for the farm area, cardboard for the shed, and separate places for feeding and for drinking water. The purpose of this part is a clean, organised home for the animals.</p></div>
+
+<h3 id="shed-herd">The herd</h3>
+<p>Five animals live on the farm: three cows and two buffaloes. This table is read from the engine.</p>
+<div class="table-wrap" id="herdTable" data-fig="herd"></div>
+<p>"Heat sensitivity" multiplies how strongly an animal reacts to heat. The two zebu breeds, Sahiwal and Gir, cope best (× 0.70). Gauri, the Holstein-Friesian cross, gives the most milk and suffers most in heat (× 1.15).</p>
+<p>In the 3D scene every animal is the same cow picture, repainted in her own coat and standing as a cut-out card that turns to face you, the way printed animals stand on a real tabletop model. The two buffaloes are that picture in Murrah colours.</p>
+
+<h3 id="shed-routine">What an animal does all day</h3>
+<p>Nobody scripts the animals. Each one decides what to do next from a few simple needs:</p>
+<ul>
+  <li><strong>Thirst</strong> rises all the time, faster when she is heat stressed and four times slower while she rests. Above 0.55 in the day (0.95 at night) she walks to the drinking trough, if one of its two places is free, and drinks up to 22 L.</li>
+  <li><strong>Hunger</strong> rises too. Grazing brings it down. Above 0.6 she goes to the feed trough.</li>
+  <li>Otherwise she picks at random: graze (68 %), lie down and rest (22 %) or stand a while (10 %).</li>
+  <li>At <strong>milking time</strong> every animal walks to her own place at the feed trough. At <strong>night</strong> each goes to her own resting spot in the shed.</li>
+  <li>She drops a 2.2 kg dung pat every 2.3 to 3.9 hours, but never while lying down.</li>
+</ul>
+<p>Animals can pass between the shed and the paddock only through the gate, which is how the <a href="#gate">IR gate</a> sees every one of them.</p>
+
+<h3 id="shed-milk">Milking and washing</h3>
+<p>Milking runs from 06:00 to 07:00 and from 17:00 to 18:00. At the end of each milking the engine works out every animal's yield:</p>
+<pre class="formula">yield = usual yield × (1 − 0.30 × heat stress since last milking)
+                    × (1 − 0.45 × sickness)
+                    × a random factor between 0.96 and 1.04</pre>
+<p>So a hot day or a fever shows up in the milk can. If an animal gives less than 80 % of her usual yield, the app raises a "milk yield dropped" warning and writes it into her health record. After each milking the milk chiller runs for three hours and the shed is washed for one hour.</p>
+<div class="callout try"><p>In the twin, go to stop 2 and press <b>Skip to milking time</b>, then <b>Wash the shed</b>. Watch the animals line up at the trough, then follow the blue beads from the shed drain to the collection tank.</p></div>
+<div class="jump">
+  <a href="index.html#step=shed">See it in the live twin</a>
+  <a class="cow" href="journey.html#milk">Walk it with Gauri</a>
+</div>
+</section>
+
+<!-- ============================================================ 6 -->
+<section id="solar">
+<h2>Solar energy</h2>
+<p>The panel charges the battery in the day. The battery runs everything, day and night. When the battery is low, the biogas generator helps. Only if all three fail does the farm take power from the grid.</p>
+<div class="callout model"><p>A mini solar panel, a battery and LED lights. The purpose is to show that the farm can cut its dependence on conventional electricity.</p></div>
+<div class="callout twin"><p>An 800 W panel and a 3 kWh battery. Lights switch on by themselves whenever the sun is nearly down.</p></div>
+
+<h3 id="solar-panel">How much the panel makes</h3>
+<p>The sun rises at 06:00, is highest at 12:00 and sets at 18:00. The engine describes the height of the sun as a number from 0 to 1:</p>
+<pre class="formula">sun   = sin(π × (hour − 6) / 12)        between 06:00 and 18:00, otherwise 0
+solar = 800 W × sun^1.15 × weather      weather: sunny 1.00, cloudy 0.36, rain 0.14</pre>
+<p>It is "night" for the lights whenever <code>sun</code> is under 0.06, which is about a quarter of an hour either side of sunrise and sunset.</p>
+
+<h3 id="solar-loads">What uses the power</h3>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Load</th><th class="n">Power</th><th>When it runs</th></tr></thead>
+  <tbody>
+    <tr><th>Controller, sensors, Wi-Fi</th><td class="n">15 W</td><td>Always</td></tr>
+    <tr><th>LED lights</th><td class="n">120 W</td><td>At night in Auto. The phone app can force them On or Off.</td></tr>
+    <tr><th>Water pump</th><td class="n">370 W</td><td>While water is being recycled</td></tr>
+    <tr><th>Fans and foggers</th><td class="n">160 W</td><td>While the shed is too hot</td></tr>
+    <tr><th>Milk chiller</th><td class="n">250 W</td><td>For 3 hours after each milking</td></tr>
+    <tr><th>Dung rover</th><td class="n">30 W</td><td>While it is driving</td></tr>
+  </tbody>
+</table></div>
+<p>Every instant the engine adds up <code>solar + generator − load</code> and moves that much energy into or out of the battery. A full battery wastes the surplus. An empty battery makes the grid supply the shortfall, and that grid energy is what lowers the "renewable power" KPI.</p>
+
+<h3 id="solar-backup">The biogas generator</h3>
+<p>The generator makes 800 W and burns 0.55 m³ of gas per hour. It follows two rules:</p>
+<ul>
+  <li><strong>Start</strong> when the gas holder is over 92 % full (so gas is never wasted), or when the battery is under 30 % and there is more than 0.5 m³ of gas.</li>
+  <li><strong>Stop</strong> when the gas falls under 0.2 m³, or the battery is over 60 % and the holder is under 70 %, or the battery is over 99 %.</li>
+</ul>
+<p>The app warns "Battery low" under 20 % and "Running on grid power" whenever the grid is in use.</p>
+<div class="callout try"><p>At stop 3 press <b>Skip to night</b> and watch the lamps come on by themselves while the battery bar starts to fall. Then press <b>Make it cloudy</b>, set the speed to 12x and watch a few days: the generator chip in the phone's Farm tab switches on more often.</p></div>
+<div class="jump">
+  <a href="index.html#step=solar">See it in the live twin</a>
+  <a class="cow" href="journey.html#solar">Walk it with Gauri</a>
+</div>
+</section>
+
+<!-- ============================================================ 7 -->
+<section id="water">
+<h2>Water recycling</h2>
+<p>Washing a shed uses a lot of water, and most of it runs away. Here it is caught, cleaned and used again, and rain from the shed roof is added to it.</p>
+<figure class="fig">
+<div class="diagram"><svg class="dg" viewBox="0 0 860 310" role="img" aria-labelledby="watT watD">
+  <title id="watT">The path of water through the farm</title>
+  <desc id="watD">Used wash water and rain from the roof gutter enter the collection tank, pass through a gravel, sand and charcoal filter, and are pumped to the storage tank. From there water goes to the shed wash, the cooling foggers and the fodder plot. 85 percent of the wash water drains back to the collection tank. Drinking water comes from a separate fresh water line.</desc>
+  <path class="e" marker-end="url(#ah)" d="M180 152H218"/><path class="e" marker-end="url(#ah)" d="M360 152H398"/><path class="e" marker-end="url(#ah)" d="M520 152H558"/>
+  <path class="e" marker-end="url(#ah)" d="M690 152H710V55H728"/><path class="e" marker-end="url(#ah)" d="M690 152H728"/><path class="e" marker-end="url(#ah)" d="M690 152H710V249H728"/>
+  <path class="e" marker-end="url(#ah)" d="M790 30V14H105V118"/>
+  <text class="lbl" x="448" y="30" text-anchor="middle">85 % of the wash water drains back to the collection tank</text>
+  <path class="e" marker-end="url(#ah)" d="M105 236V186"/>
+  <path class="e" marker-end="url(#ah)" d="M360 263H438"/><text class="lbl" x="399" y="256" text-anchor="middle">200 L/h</text>
+  <path class="e" marker-end="url(#ah)" d="M290 236V208H625V186"/>
+  <text class="lbl" x="458" y="202" text-anchor="middle">fresh top-up, 300 L/h, only when both tanks are low</text>
+  <rect class="n" x="30" y="120" width="150" height="64" rx="10"/><text x="105" y="147" text-anchor="middle">Collection tank</text><text class="s" x="105" y="166" text-anchor="middle">800 L · used water</text>
+  <rect class="n" x="220" y="120" width="140" height="64" rx="10"/><text x="290" y="147" text-anchor="middle">Filter</text><text class="s" x="290" y="166" text-anchor="middle">gravel · sand · charcoal</text>
+  <rect class="n" x="400" y="120" width="120" height="64" rx="10"/><text x="460" y="147" text-anchor="middle">Pump</text><text class="s" x="460" y="166" text-anchor="middle">140 L/h · 370 W</text>
+  <rect class="n" x="560" y="120" width="130" height="64" rx="10"/><text x="625" y="147" text-anchor="middle">Storage tank</text><text class="s" x="625" y="166" text-anchor="middle">1000 L · filtered</text>
+  <rect class="n" x="730" y="30" width="120" height="50" rx="10"/><text x="790" y="52" text-anchor="middle">Shed wash</text><text class="s" x="790" y="69" text-anchor="middle">150 L/h</text>
+  <rect class="n" x="730" y="127" width="120" height="50" rx="10"/><text x="790" y="149" text-anchor="middle">Cooling foggers</text><text class="s" x="790" y="166" text-anchor="middle">25 L/h</text>
+  <rect class="n" x="730" y="224" width="120" height="50" rx="10"/><text x="790" y="246" text-anchor="middle">Fodder plot</text><text class="s" x="790" y="263" text-anchor="middle">110 L/h</text>
+  <rect class="n2" x="30" y="236" width="150" height="54" rx="10"/><text x="105" y="259" text-anchor="middle">Shed roof gutter</text><text class="s" x="105" y="277" text-anchor="middle">rain, 260 L/h</text>
+  <rect class="n2" x="220" y="236" width="140" height="54" rx="10"/><text x="290" y="268" text-anchor="middle">Fresh water line</text>
+  <rect class="n" x="440" y="236" width="150" height="54" rx="10"/><text x="515" y="259" text-anchor="middle">Drinking trough</text><text class="s" x="515" y="277" text-anchor="middle">120 L</text>
+</svg></div>
+<figcaption>Recycled water never reaches the drinking trough. The animals always drink from the fresh line.</figcaption>
+</figure>
+<div class="callout model"><p>Two tanks, a filter column of gravel, sand and charcoal, and a small pump moved by the L293D driver. The four steps are collection, filtration, pumping and circulation.</p></div>
+
+<h3 id="water-pump">When the pump runs</h3>
+<p>In <b>Auto</b> the pump follows two thresholds, far enough apart that it does not keep switching on and off:</p>
+<ul>
+  <li><strong>On</strong> when the collection tank holds more than 110 L and the storage tank is under 93 % full.</li>
+  <li><strong>Off</strong> when the collection tank falls under 25 L or the storage tank reaches 98 %.</li>
+</ul>
+<p>In <b>Manual</b> the farmer switches it from the phone. It still protects itself: if the collection tank falls under 4 L, or the storage tank is full, the pump stops and the app says why ("Dry-run protection switched the pump off").</p>
+
+<h3 id="water-uses">Where the water goes</h3>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Use</th><th class="n">Rate</th><th>Rule</th></tr></thead>
+  <tbody>
+    <tr><th>Shed wash</th><td class="n">150 L/h</td><td>One hour after each milking, or when you press <b>Wash shed</b>. 85 % drains back to the collection tank.</td></tr>
+    <tr><th>Cooling foggers</th><td class="n">25 L/h</td><td>While the cooling is on and the storage tank holds more than 10 L. This water evaporates.</td></tr>
+    <tr><th>Fodder irrigation</th><td class="n">110 L/h</td><td>Starts in the 06:30 to 09:30 or 16:00 to 18:30 window if soil moisture is under 45 %, it is not raining and the storage tank holds more than 80 L. Stops when moisture passes 92 %, the tank falls under 30 L, or it rains.</td></tr>
+    <tr><th>Rain harvest</th><td class="n">+260 L/h</td><td>Into the collection tank whenever it rains, until the tank is full.</td></tr>
+    <tr><th>Fresh top-up</th><td class="n">+300 L/h</td><td>Only when the storage tank is under 110 L and the collection tank is under 110 L too. Stops at 330 L.</td></tr>
+    <tr><th>Drinking trough</th><td class="n">+200 L/h</td><td>Refilled from the fresh line when under half full (60 L), until 97 %.</td></tr>
+  </tbody>
+</table></div>
+<p>The "water reused" KPI is the share of all water used that came through the pump rather than from the fresh line.</p>
+<div class="callout note"><p>Why not let the animals drink the recycled water? A gravel, sand and charcoal filter removes dirt, colour and smell. It does not remove germs. Filtered wash water is good enough to wash a floor or water a crop, and not good enough to drink.</p></div>
+<div class="callout try"><p>At stop 4 press <b>Wash the shed</b> and open the phone's Farm tab. The collection bar rises, the pump button turns ON by itself, and the storage bar climbs back. Then press <b>Make it rain</b>.</p></div>
+<div class="jump">
+  <a href="index.html#step=water">See it in the live twin</a>
+  <a class="cow" href="journey.html#wash">Walk it with Gauri</a>
+</div>
+</section>
+
+<!-- ============================================================ 8 -->
+<section id="monitoring">
+<h2>Smart monitoring</h2>
+<p>A sensor in the shed measures temperature and humidity. A small controller reads it, shows it on a display, sends it to the farmer's phone over Wi-Fi, and switches the pump.</p>
+<figure class="fig">
+<div class="diagram"><svg class="dg" viewBox="0 0 860 300" role="img" aria-labelledby="datT datD">
+  <title id="datT">The path of data from sensor to phone</title>
+  <desc id="datD">The DHT11 sensor and the IR sensor feed the ESP8266 board. The board drives the LCD, the red LED, and the L293D driver that powers the pump. Over its own Wi-Fi hotspot the board sends its state to the phone app or the 3D twin every two seconds, and receives pump on and off commands back.</desc>
+  <path class="e" marker-end="url(#ah)" d="M200 64H250V100H298"/><path class="e" marker-end="url(#ah)" d="M200 178H250V140H298"/>
+  <path class="e" marker-end="url(#ah)" d="M500 90H550V45H598"/><path class="e" marker-end="url(#ah)" d="M500 120H598"/><path class="e" marker-end="url(#ah)" d="M710 120H738"/><path class="e" marker-end="url(#ah)" d="M500 150H550V195H598"/>
+  <path class="e" marker-end="url(#ah)" d="M370 180V230"/><path class="e" marker-end="url(#ah)" d="M430 232V182"/>
+  <text class="m" x="362" y="210" text-anchor="end">/api/state every 2 s</text><text class="m" x="438" y="210">/api/pump?on=1</text>
+  <rect class="n" x="30" y="36" width="170" height="56" rx="10"/><text x="115" y="60" text-anchor="middle">DHT11 sensor</text><text class="s" x="115" y="78" text-anchor="middle">shed temperature + humidity</text>
+  <rect class="n" x="30" y="150" width="170" height="56" rx="10"/><text x="115" y="174" text-anchor="middle">IR sensor at the gate</text><text class="s" x="115" y="192" text-anchor="middle">beam broken = an animal</text>
+  <rect class="n2" x="300" y="60" width="200" height="120" rx="12"/><text class="h" x="400" y="88" text-anchor="middle">ESP8266 board</text><text x="400" y="110" text-anchor="middle">controller + Wi-Fi hotspot</text><text class="s" x="400" y="130" text-anchor="middle">reads the DHT11 every 2 s</text><text class="m" x="400" y="158" text-anchor="middle">http://192.168.4.1</text>
+  <rect class="n" x="600" y="20" width="170" height="50" rx="10"/><text x="685" y="42" text-anchor="middle">16 × 2 LCD</text><text class="s" x="685" y="59" text-anchor="middle">temperature, humidity, pump</text>
+  <rect class="n" x="600" y="95" width="110" height="50" rx="10"/><text x="655" y="124" text-anchor="middle">L293D driver</text>
+  <rect class="n" x="740" y="95" width="100" height="50" rx="10"/><text x="790" y="124" text-anchor="middle">Water pump</text>
+  <rect class="n" x="600" y="170" width="170" height="50" rx="10"/><text x="685" y="192" text-anchor="middle">Red LED</text><text class="s" x="685" y="209" text-anchor="middle">half a second per crossing</text>
+  <rect class="n" x="300" y="232" width="200" height="56" rx="10"/><text x="400" y="256" text-anchor="middle">Phone app or 3D twin</text><text class="s" x="400" y="274" text-anchor="middle">any browser on the hotspot</text>
+</svg></div>
+<figcaption>What each electronic part does. The pin-by-pin wiring is in <a href="#hw-wiring">Hardware</a>.</figcaption>
+</figure>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Part</th><th>Its job</th></tr></thead>
+  <tbody>
+    <tr><th>DHT11</th><td>Measures air temperature and humidity in the shed. It can be read about once every two seconds.</td></tr>
+    <tr><th>ESP8266</th><td>A small computer with Wi-Fi built in. It reads the sensors, decides, and talks to the phone. It creates its own hotspot, so no router is needed.</td></tr>
+    <tr><th>16 × 2 LCD</th><td>Shows the reading on the model itself: <code>Temp:31.5°C</code> on the first line, <code>Hum:64% Pump:ON</code> on the second.</td></tr>
+    <tr><th>L293D</th><td>A motor driver. An ESP8266 pin can only give a tiny current. The L293D takes that small signal and switches the pump's own, stronger supply.</td></tr>
+  </tbody>
+</table></div>
+
+<h3 id="thi">THI: how hot the animals feel</h3>
+<p>Cattle suffer from heat sooner in damp air, because sweat and breath cool them less. The <strong>Temperature-Humidity Index</strong> puts temperature and humidity into one number. The engine uses this formula, with <code>T</code> in °C and <code>RH</code> in percent:</p>
+<pre class="formula">THI = (1.8 × T + 32) − (0.55 − 0.0055 × RH) × (1.8 × T − 26)</pre>
+<figure class="fig" data-fig="thi">
+  <h4>THI calculator</h4>
+  <p class="sub">Move the sliders. The reading is fed to the farm engine as if it came from a real DHT11, and the engine answers.</p>
+  <div class="calc">
+    <div>
+      <div class="slider"><label for="thiT"><span>Shed temperature</span><output id="thiTOut" for="thiT"></output></label><input id="thiT" type="range" min="15" max="45" step="0.5" value="31"></div>
+      <div class="slider"><label for="thiH"><span>Relative humidity</span><output id="thiHOut" for="thiH"></output></label><input id="thiH" type="range" min="20" max="100" step="1" value="65"></div>
+      <div class="thi-out"><span class="big"><small>THI</small><span id="thiVal"></span></span><span id="thiBand" role="status"></span></div>
+      <div class="scale" id="thiScale" aria-hidden="true"><div class="bands" id="thiBands"></div><i class="mark" id="thiMark"></i></div>
+      <ul class="does">
+        <li><span>Fans and foggers</span><span id="thiCool"></span></li>
+        <li><span>Alert in the app</span><span id="thiAlert"></span></li>
+      </ul>
+    </div>
+    <div>
+      <p class="mini">What each belt would read after three steady hours at this THI</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Animal</th><th class="n">Body temp</th><th class="n">Change</th><th class="n">Heat stress</th></tr></thead>
+        <tbody id="thiBelt"></tbody>
+      </table></div>
+    </div>
+  </div>
+  <p class="mini">THI for any temperature and humidity. The outlined cell is nearest to your sliders.</p>
+  <div class="table-wrap" id="thiGrid"></div>
+  <div class="band-key" id="thiKey"></div>
+  <figcaption>Slide the temperature up past THI 79 and the cooling switches on. Now slide it slowly back down: the cooling stays on until THI 76.5. That gap is deliberate. See the note below.</figcaption>
+</figure>
+
+<h3 id="thi-rules">What the farm does about it</h3>
+<ul>
+  <li><strong>Fans and foggers switch on at THI 79 and off again at THI 76.5.</strong> The decision uses the THI the shed would have without cooling, so that the cooling does not switch itself off the moment it starts to work.</li>
+  <li>While the cooling runs, the shed settles 4.5 °C cooler and 6 points more humid than it would be, the fans draw 160 W and the foggers use 25 L of stored water per hour.</li>
+  <li>If the shed THI still reaches 79 with the cooling on, the app raises the warning "Shed heat stress".</li>
+  <li>An animal starts to feel heat stress above THI 77. At THI 89 it is at its maximum. Stress raises her body temperature by up to 0.9 °C and her heart rate by up to 16 beats a minute, both multiplied by her heat sensitivity, and it lowers her next milk yield.</li>
+  <li>The paddock is hotter than the shed in sunshine: the engine adds up to 2.2 °C in full sun.</li>
+</ul>
+<div class="callout note"><p>Two thresholds instead of one is called <strong>hysteresis</strong>. With a single threshold at 79, a shed hovering around 79 would switch the fans on and off every few seconds, which wears out motors and relays. The pump and the generator use the same trick.</p></div>
+
+<h3 id="mon-weather">The weather behind it</h3>
+<p>The outside air follows a daily wave: coolest at 03:00, warmest at 15:00.</p>
+<pre class="formula">air temperature = 23.5 + 4.5 × sin(2π × (hour − 9) / 24)     19 °C to 28 °C on a normal day
+                  + 8.0  in a heat wave
+                  − 1.2  when cloudy,  − 3.5  in rain
+humidity        = 62 − 2 × (temperature − 23.5)
+                  + 8 when cloudy,  + 26 in rain              kept between 22 % and 97 %</pre>
+<p>The shed is 1 °C warmer than the outside air before cooling. When the real ESP8266 is linked, its DHT11 reading replaces this model for the shed.</p>
+<div class="callout try"><p>At stop 5 press <b>Start a heat wave</b>. On the kiosk screen and in the phone's Farm tab the THI climbs into "Heat stress", then the fans and foggers start. Press <b>Switch the pump by hand</b> to see the L293D obey the phone.</p></div>
+<div class="jump">
+  <a href="index.html#step=monitor">See it in the live twin</a>
+  <a class="cow" href="journey.html#heat">Walk it with Gauri</a>
+</div>
+</section>
+
+<!-- ============================================================ 9 -->
+<section id="gate">
+<h2>Animal detection gate</h2>
+<p>An infrared beam shines across the gate between the shed and the paddock. Each time an animal walks through, she breaks the beam. A red LED flashes and the controller counts.</p>
+<div class="callout model"><p>One IR sensor module and one red LED. Most IR modules pull their output LOW when they see something. The firmware counts each new beam break once and lights the LED for half a second.</p></div>
+<div class="callout twin"><p>Every animal that walks through the gate flashes the LED and adds one to the crossings counter. The phone's Farm tab shows how many animals are in the shed and in the paddock, and the last crossing: who, which way, and when.</p></div>
+<h3 id="gate-uses">What the count is good for</h3>
+<ul>
+  <li>Knowing where the herd is without walking the farm.</li>
+  <li>A log of every crossing with its time.</li>
+  <li>The same beam can warn of movement at night.</li>
+  <li>A check on the GPS: when an animal misses milking, the app says "the gate counter and GPS agree she never came in".</li>
+</ul>
+<div class="callout note"><p>Be honest about this in a viva. <strong>A single IR beam can only tell that something passed.</strong> It cannot tell which animal it was, or which way she went. The twin shows names and directions because the simulation already knows where every animal is. To get direction on real hardware you would need two beams side by side and to see which breaks first. To know which animal, you need her belt.</p></div>
+<div class="callout try"><p>At stop 6 press <b>Call the herd in for milking</b> and count the red flashes as the five animals walk in.</p></div>
+<div class="jump">
+  <a href="index.html#step=gate">See it in the live twin</a>
+  <a class="cow" href="journey.html#gate">Walk it with Gauri</a>
+</div>
+</section>
+
+<!-- ============================================================ 10 -->
+<section id="belt">
+<h2>AI health belt</h2>
+<p>Every animal wears a belt with five sensors. The belt does not just report numbers. It learns what is normal for that one animal and tells the farmer when she stops being normal, usually before a person would notice.</p>
+<div class="callout note"><p>The belt exists only in the twin. There is no belt hardware in this project, and its readings come from a model of an animal's body, not from a real cow.</p></div>
+
+<h3 id="belt-sensors">The five sensors</h3>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Sensor</th><th>Measures</th><th>What it reveals</th></tr></thead>
+  <tbody>
+    <tr><th>Temperature</th><td>Body temperature, °C</td><td>Fever, heat stress</td></tr>
+    <tr><th>Heart rate</th><td>Beats per minute</td><td>Stress, illness, excitement</td></tr>
+    <tr><th>Accelerometer</th><td>An activity index: about 4 lying down, 35 grazing, 75 walking</td><td>Restlessness (estrus), dullness (illness)</td></tr>
+    <tr><th>Rumination</th><td>Minutes of cud-chewing per hour: about 40 lying down, 6 grazing</td><td>Digestion. A sick cow stops chewing the cud.</td></tr>
+    <tr><th>GPS</th><td>Position, walking speed, distance walked</td><td>Lameness, isolation from the herd, straying. See <a href="#gps">GPS tracking</a>.</td></tr>
+  </tbody>
+</table></div>
+
+<h3 id="belt-body">How the twin makes the readings</h3>
+<p>The engine keeps three hidden numbers for each animal, each from 0 to 1: <strong>heat stress</strong>, <strong>sickness</strong> and <strong>lameness</strong>. The belt readings are worked out from them and from what she is doing:</p>
+<pre class="formula">body temperature = her normal temperature
+                 + 0.15 × sin(2π × (hour − 10) / 24)     a small daily rhythm
+                 + 0.9 × heat stress + 1.7 × sickness     plus sensor noise of ± 0.04 °C
+
+heart rate       = her resting rate + 0.16 × activity
+                 + 16 × heat stress + 14 × sickness + 6 if in estrus     noise ± 1.5
+
+activity         → value for what she is doing × (1 − 0.55 × sickness) × (1 − 0.25 × heat stress) × 1.9 if in estrus
+rumination       → value for what she is doing × (1 − 0.60 × sickness) × (1 − 0.40 × heat stress) × 0.6 if in estrus</pre>
+<p>A fever builds up over about an hour and fades over about two hours once treated. Estrus lasts 14 hours. A lame animal walks at as little as 40 % of her normal speed and lies down more.</p>
+
+<h3 id="belt-baseline">Learning each animal's baseline</h3>
+<p>A buffalo's normal temperature is lower than a cow's. One animal is naturally livelier than another. A single limit for the whole herd would either miss a quiet animal's fever or keep raising false alarms for a lively one. So the belt compares each animal only with herself.</p>
+<p>Before you see anything, the twin silently runs one whole farm day. From that day it stores, for every animal:</p>
+<ul>
+  <li>her average body temperature,</li>
+  <li>her average activity and rumination, separately for day (06:30 to 21:30) and night,</li>
+  <li>her busiest normal two hours of activity, which is the ceiling for "restless",</li>
+  <li>her normal walking speed from GPS.</li>
+</ul>
+<p>These are the baselines the engine learned for this herd a moment ago:</p>
+<div class="table-wrap" id="baseTable" data-fig="herd"></div>
+
+<h3 id="belt-scoring">How the AI scores a reading</h3>
+<p>Every 15 farm minutes the belt stores a sample, and the AI works out four scores from 0 to 1. The code is the function <code>evaluate()</code> in <code>src/sim.js</code>. First it prepares four comparisons:</p>
+<div class="table-wrap"><table class="wide">
+  <thead><tr><th>Name</th><th>Meaning</th><th>How it is worked out</th></tr></thead>
+  <tbody>
+    <tr><th><code>herdHeat</code></th><td>How hot the shed is, 0 to 1</td><td>(shed THI − 77) ÷ 12, kept between 0 and 1</td></tr>
+    <tr><th><code>dT</code></th><td>Temperature above her own baseline, with the effect of hot weather taken out</td><td>her average over the last hour − her baseline − 0.8 × <code>herdHeat</code></td></tr>
+    <tr><th><code>actR</code></th><td>Is she as active as usual?</td><td>her average activity over 3 hours ÷ her baseline for this time of day</td></tr>
+    <tr><th><code>rumR</code></th><td>Is she chewing the cud as usual?</td><td>her average rumination over 6 hours ÷ her baseline for this time of day</td></tr>
+    <tr><th><code>actX</code></th><td>Is she more active than she ever normally is?</td><td>her average activity over 2 hours ÷ her busiest normal 2 hours</td></tr>
+    <tr><th><code>mobR</code></th><td>Is she walking at her normal speed?</td><td>her GPS walking speed over the last 2 hours ÷ her normal speed</td></tr>
+  </tbody>
+</table></div>
+<p>In the formulas below, <code>ramp(x)</code> means "x, but never less than 0 or more than 1".</p>
+<pre class="formula">fever    = 0.7 × ramp((dT − 0.6) / 0.8)
+         + 0.2 × ramp((0.85 − rumR) / 0.4) × ramp(dT / 0.5)
+         + 0.1 × ramp((0.85 − actR) / 0.4) × ramp(dT / 0.5)
+
+heat     = herdHeat × ramp((temperature over the last hour − baseline) / 0.5)
+
+estrus   = ramp((actX − 1.12) / 0.4)            only if dT is under 0.6, otherwise 0
+
+lameness = ramp((0.74 − mobR) / 0.22)           only if dT is under 0.5, estrus is under 0.3
+                                                and there was no fever verdict in the last 3 hours</pre>
+<p>In words:</p>
+<ul>
+  <li><strong>Fever</strong> is mostly temperature: the score starts when she is 0.6 °C above her own normal and is strongest at 1.4 °C. Less cud-chewing and less activity add to it, but only if she is also warm, so a quiet hour on its own is never read as illness.</li>
+  <li><strong>Heat stress</strong> needs two things at once: a hot shed, and her own temperature up.</li>
+  <li><strong>Estrus</strong> ("in heat", ready to breed) is restlessness without fever: activity more than 12 % above her busiest normal two hours.</li>
+  <li><strong>Lameness</strong> is slow walking without fever: the score starts when her GPS walking speed falls under 74 % of normal.</li>
+</ul>
+<p>Then the verdict:</p>
+<ol>
+  <li>The highest of the four scores wins. If it is under 0.5, she is healthy. On a tie the order is fever, heat stress, estrus, lameness.</li>
+  <li>A verdict must repeat on <strong>two readings in a row</strong>, 30 farm minutes, before the alert is raised. Two healthy readings in a row clear it. One odd reading never rings the farmer's phone.</li>
+  <li>A fever alert is <strong>critical</strong>. The other three are <strong>warnings</strong>.</li>
+</ol>
+<p>The <strong>health score</strong> shown in her record is:</p>
+<pre class="formula">health = 100 − 48 × fever − 26 × heat − 6 × estrus − 30 × lameness
+             − 10 × (how far her thirst is past its limit) − 12 if she is outside the geofence</pre>
+<p>Her record also shows a five-part <strong>health breakdown</strong>, each part from 0 to 100: temperature, rumination, activity, mobility (from GPS) and hydration (hours since her last trough visit: full marks up to 14 hours, zero at 26).</p>
+<div class="callout note"><p><strong>How does it tell a fever from a hot day?</strong> On a hot day every animal's temperature rises together, and the shed THI rises too. The AI subtracts 0.8 °C × <code>herdHeat</code> from each animal's rise before judging fever. A fever is one animal hot on her own. Heat stress is the whole herd warm together with a hot shed.</p></div>
+<div class="callout note"><p><strong>Is it really AI?</strong> It is a small, explainable expert system: per-animal learned baselines plus scoring rules whose every weight you can read above. It is not a neural network, and it was not trained on data from real animals. The advantage is that it can always say why it raised an alert, and the app shows that reason to the farmer.</p></div>
+
+<h3 id="belt-experiment">Run the experiment</h3>
+<p>This figure starts a fresh farm, lets it run normally from 08:00 to 10:00, then secretly makes one animal ill and steps the engine forward 15 farm minutes at a time. Nothing tells the AI what was done. The numbered markers show when it noticed.</p>
+<figure class="fig" data-fig="belt">
+  <div class="controls">
+    <span class="lbl" id="beltClbl">Make her</span>
+    <div class="seg" role="group" aria-labelledby="beltClbl" id="beltCond">
+      <button type="button" data-c="fever" aria-pressed="true">Feverish</button><button type="button" data-c="estrus" aria-pressed="false">In heat (estrus)</button><button type="button" data-c="lame" aria-pressed="false">Lame</button>
+    </div>
+    <label class="sr" for="beltCow">Animal</label>
+    <select id="beltCow"></select>
+    <label class="check"><input type="checkbox" id="beltTreat" checked> Treat her one hour after the alert</label>
+    <button type="button" class="btn primary" id="beltRun">Run the experiment</button>
+  </div>
+  <p class="result" id="beltResult" role="status"></p>
+  <div class="charts" id="beltCharts" tabindex="0" role="group" aria-label="Charts of one animal's belt readings during the experiment. Use the left and right arrow keys to read values."></div>
+  <ol class="events" id="beltEvents" aria-label="What happened during the experiment"></ol>
+  <figcaption>Thin grey lines are her own learned baselines. Activity and rumination jump about because they depend on what she is doing at that moment, which is why the AI judges averages over hours and not single readings.</figcaption>
+</figure>
+<div class="callout try"><p>Run all three conditions for the same animal and compare. Fever: temperature climbs, activity and rumination sink. Estrus: temperature stays flat while activity runs above her busiest normal. Lameness: temperature stays flat and only the GPS walking speed gives her away. Fever is found fastest, usually in under two farm hours. Estrus and lameness usually take one and a half to four. See <a href="#limits">Limits</a>.</p></div>
+
+<h3 id="belt-app">In the twin</h3>
+<ul>
+  <li>Click an animal, or tap her in the <b>Herd</b> tab, to open her record: health score, AI status with its advice and confidence, four vitals with 24-hour charts, health breakdown, movement, herd register and health record.</li>
+  <li><b>Give her a fever</b>, <b>Simulate heat</b>, <b>Make her lame</b> and <b>Let her stray</b> are in the Demonstration card at the bottom of her record, and on tour stops 7 and 8.</li>
+  <li>When the AI flags her, a treatment button appears: <b>Call the vet</b>, <b>Record breeding</b> or <b>Call the hoof trimmer</b>.</li>
+  <li>Press <kbd>C</kbd> or use the <b>Coats / Health / Thermal</b> switch. In <b>Health</b> view each animal takes the colour of her AI status. In <b>Thermal</b> view she is coloured by the body temperature her belt reports, from 37.5 °C to 41.5 °C. That is a drawing of belt data, not a camera image.</li>
+  <li>In Coats view the bell on her collar changes colour when she is flagged.</li>
+</ul>
+<h3 id="belt-register">Herd register and health record</h3>
+<p>Each animal also has what a farmer's record book holds. The app adds the session's days to "days in milk", raises a reminder at 09:00 when a vaccination or deworming is due today or tomorrow, and lets you press <b>Mark done</b>, which books the next FMD or HS + BQ dose 180 days ahead and the next deworming 90 days ahead.</p>
+<div class="table-wrap" id="registerTable" data-fig="herd"></div>
+<p>The <strong>health record</strong> is a diary the engine writes by itself: every AI alert, every return to normal, treatments, missed or low milkings, and every time she left or re-entered the safe zone. <b>Download report</b> in the Herd tab saves the vitals, GPS positions, register and health record of every animal as a CSV file that opens in Excel.</p>
+<div class="jump">
+  <a href="index.html#step=belt">See it in the live twin</a>
+  <a class="cow" href="journey.html#belt">Walk it with Gauri</a>
+  <a class="cow" href="journey.html#graze">Gauri on the paddock</a>
+</div>
+</section>
+
+<!-- ============================================================ 11 -->
+<section id="gps">
+<h2>GPS tracking and virtual fence</h2>
+<p>Each belt also reports where the animal is. That one extra reading gives the farmer four things: a live map, an alarm when an animal leaves the farm, a fence that needs no posts or wire, and two more early health signs.</p>
+<div class="callout note"><p>Like the rest of the belt, GPS is simulated. For the map, the 36 × 24 inch board stands for a 72 × 48 m farm near Prayagraj: one inch on the board is 2 m on the map.</p></div>
+
+<h3 id="gps-fix">The GPS fix</h3>
+<ul>
+  <li>Every belt sends a new position every 3 farm minutes.</li>
+  <li>A real GPS is less accurate under a roof, and the model copies that: in the open it reports an accuracy of 1.2 to 2 m with 9 to 12 satellites, and in the shed 4.5 to 6.5 m with 4 to 6 satellites.</li>
+  <li>Every 6 farm minutes a breadcrumb is added to her trail. The last 60 are kept.</li>
+  <li>The belt adds up the distance she has walked today, and how many hours she has spent grazing, resting, walking and feeding.</li>
+</ul>
+
+<h3 id="gps-geofence">Geofence: nobody gets lost</h3>
+<p>The shed and the paddock together are the <strong>safe zone</strong>. If a belt reports a position outside it, the app raises a critical alert at once: "<i>Name</i> has left the safe zone". The farmer presses <b>Guide back</b>, the belt plays an audio cue, and the animal turns round and walks home. While she is out she is not milked, and her health score loses 12 points.</p>
+<p class="result" id="strayResult" data-fig="gps" role="status"></p>
+<div class="callout try"><p>At stop 8 press <b>Leave the side gate open</b>. The phone switches to the Map tab and one animal wanders out toward the fodder plot. When the alert arrives, press <b>Guide her back</b>.</p></div>
+
+<h3 id="gps-fence">Virtual fence: resting half the pasture</h3>
+<p>Grass that is grazed every day never recovers. The usual answer is to divide the pasture with fences and move the herd between the parts, which costs wire, posts and labour. Here the fence is only a line on the map. When an animal reaches it, her belt gives an audio cue and she turns back.</p>
+<ul>
+  <li>The paddock is split down the middle into a <strong>west cell</strong> and an <strong>east cell</strong>. The strip in front of the gate stays open so the animals can always reach the shed.</li>
+  <li>Grazing eats a cell down. Thin grass feeds an animal less: at full cover grazing satisfies her at 110 % of the base rate, on bare ground at 55 %.</li>
+  <li>A rested cell regrows in daylight, faster in rain and more slowly as it approaches full cover. A cell that is being grazed regrows at less than half that speed.</li>
+  <li>With <b>Auto</b> on, the herd is moved when the grazed cell falls under 35 % cover and the other cell is at least 25 points better.</li>
+  <li>The farmer can also choose <b>West</b>, <b>East</b> or <b>Whole</b> by hand. "Whole" removes the fence, so neither cell rests.</li>
+</ul>
+<figure class="fig" data-fig="gps">
+  <h4>Three days of rotational grazing</h4>
+  <p class="sub">Recorded from the farm engine just now, with Auto on, starting when the twin opens at 08:00 on day 1.</p>
+  <div class="charts" id="gpsCharts" tabindex="0" role="group" aria-label="Chart of grass cover in the two grazing cells over three days. Use the left and right arrow keys to read values."></div>
+  <ol class="events" id="gpsEvents" aria-label="Herd moves"></ol>
+  <figcaption>The session starts with the herd in the thinner east cell. Watch for the moment the engine moves the herd: the grazed cell stops falling and starts to recover.</figcaption>
+</figure>
+
+<h3 id="gps-health">GPS as a health sensor</h3>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Signal from GPS</th><th>What it points to</th><th>What the app does</th></tr></thead>
+  <tbody>
+    <tr><th>Walking speed well under her normal</th><td>Lameness: a sore foot</td><td>Raises "Possible lameness" through the belt AI.</td></tr>
+    <tr><th>More than 12 m from the rest of the herd while feverish</th><td>A sick animal leaves the herd</td><td>Adds the distance to the fever advice. In the twin a sick animal walks to the quietest corner and lies down.</td></tr>
+    <tr><th>No visit to the drinking trough for 24 hours</th><td>She is not drinking</td><td>Raises "<i>Name</i> has not been to the water trough".</td></tr>
+    <tr><th>Outside the fence at milking time</th><td>A missed milking</td><td>Raises "missed milking" and logs it in her health record.</td></tr>
+  </tbody>
+</table></div>
+
+<h3 id="gps-map">The Map tab</h3>
+<ul>
+  <li>A coloured dot for each animal, always labelled with her name. A pulsing ring marks an animal that is flagged or outside. Hover a dot for her status, or click it to open her record.</li>
+  <li>Three layers: <b>Trails</b> (the last four hours of breadcrumbs), <b>Heat map</b> (where the herd has spent its time, darker for longer) and <b>Plain</b>.</li>
+  <li>The geofence outline turns red when anyone is outside, and a banner offers <b>Guide back</b>.</li>
+  <li>The <b>Virtual fence</b> card shows the grass cover of both cells and the West / East / Whole and Auto controls.</li>
+  <li><b>Where they are</b> lists each animal's zone, what she is doing, distance walked today and the quality of her last fix.</li>
+  <li>In an animal's own record, <b>Ring her belt</b> sounds its buzzer and light for 6 seconds, and a beam marks her on the 3D board.</li>
+  <li>The <b>GPS</b> button in the top bar, or <kbd>G</kbd>, draws the trails, the geofence and the virtual fence on the 3D board itself.</li>
+</ul>
+<div class="jump">
+  <a href="index.html#step=gps">See it in the live twin</a>
+  <a class="cow" href="journey.html#graze">Walk it with Gauri</a>
+</div>
+</section>
+
+<!-- ============================================================ 12 -->
+<section id="biogas">
+<h2>Biogas, compost and fodder</h2>
+<p>Dung is the one thing a dairy farm never runs out of. On this farm none of it leaves. It is turned into cooking gas, electricity and compost, and the compost grows the next meal.</p>
+<div class="callout model"><p>The purpose of this part of the project is to show that waste is a resource: dung collected separately, a biogas plant, and compost for the soil.</p></div>
+
+<h3 id="bio-rover">1. The dung rover</h3>
+<p>A small rover waits at its dock at the edge of the paddock. It sets off when two or more dung pats are waiting, or when one has been lying for more than an hour. It drives to the nearest pat, picks it up, and keeps collecting until it carries 11 kg or nothing is left. Then it returns and tips its load into the digester inlet. If ten pats pile up, the app warns "Dung build-up".</p>
+
+<h3 id="bio-digester">2. The digester</h3>
+<p>The digester is a sealed tank where bacteria break dung down without air and give off biogas, which is mostly methane. The plant on the board is a <strong>floating-drum</strong> type: the gas collects under an upturned drum, and the drum rises as it fills. In the twin you can watch the green drum go up and down.</p>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Step</th><th>Rule in the engine</th></tr></thead>
+  <tbody>
+    <tr><th>Feeding</th><td>Dung moves from the inlet into the digester at up to 7 kg per hour.</td></tr>
+    <tr><th>Digestion</th><td>Each hour, one sixteenth of the material in the digester is digested.</td></tr>
+    <tr><th>Gas</th><td>Each kilogram digested gives 0.042 m³ of biogas. The holder is full at 3 m³.</td></tr>
+    <tr><th>Slurry</th><td>Each kilogram digested leaves 0.28 kg of compost.</td></tr>
+  </tbody>
+</table></div>
+
+<h3 id="bio-gas">3. Using the gas</h3>
+<ul>
+  <li><strong>The stove</strong> burns 0.4 m³ per hour at meal times: 07:00 to 08:12, 12:24 to 13:24 and 19:00 to 20:12, as long as the holder has more than 0.15 m³. The twin counts every cubic metre burned as 0.43 kg of LPG that did not have to be bought.</li>
+  <li><strong>The generator</strong> turns gas into 800 W of electricity when the holder is nearly full or the battery is low. Its rules are in <a href="#solar-backup">Solar energy</a>.</li>
+</ul>
+
+<h3 id="bio-compost">4. Compost and fodder</h3>
+<ul>
+  <li>At 08:30 each morning, if at least 12 kg of compost is ready, it is spread on the fodder plot. Each kilogram raises the soil fertility a little, and fertility slowly wears off again.</li>
+  <li>The crop grows only in daylight. It grows faster with more sun, wetter soil and richer soil:</li>
+</ul>
+<pre class="formula">growth per hour = 0.04 × sun × weather × (0.3 + 0.7 × soil moisture) × (0.55 + 0.9 × soil fertility)
+                  weather counts as at least 0.45, so the crop still grows on dull days</pre>
+<ul>
+  <li>When the crop is fully grown it is harvested: <strong>110 kg of green fodder</strong> goes to the feed store, and the plot starts again from 18 %. In sunny weather that happens every four or five farm days.</li>
+  <li>Three times a day the feed trough is filled from the store. Whatever the store cannot supply is counted as bought feed.</li>
+</ul>
+<p>That closes the loop: fodder → herd → dung → digester → compost → fodder.</p>
+<div class="callout try"><p>At stop 9 press <b>Fast-forward one day</b> and watch the rover, the drum and the crop. Then open the Farm tab: "Biogas and soil" shows the gas holder, the crop, the dung waiting and the compost ready.</p></div>
+<div class="jump">
+  <a href="index.html#step=biogas">See it in the live twin</a>
+  <a class="cow" href="journey.html#dung">Dung collection</a>
+  <a class="cow" href="journey.html#biogas">Dung becomes gas</a>
+  <a class="cow" href="journey.html#fodder">Compost and fodder</a>
+</div>
+</section>
+
+<!-- ============================================================ 13 -->
+<section id="score">
+<h2>KPIs and the farm score</h2>
+<p>A KPI, key performance indicator, is a number that tells you at a glance how well something is going. The strip at the bottom of the twin shows five. Behind them the engine keeps five percentages and combines them into one <strong>farm score</strong> out of 100.</p>
+<div class="table-wrap"><table class="wide">
+  <thead><tr><th>KPI</th><th>How it is worked out</th><th class="n">Weight in the score</th></tr></thead>
+  <tbody>
+    <tr><th>Water reuse</th><td>recycled water ÷ (recycled + fresh water), as a percentage</td><td class="n">25 %, counted double</td></tr>
+    <tr><th>Renewable power</th><td>100 × (1 − grid energy ÷ energy used)</td><td class="n">25 %</td></tr>
+    <tr><th>Waste collected</th><td>100 × (1 − dung still on the ground ÷ (all dung produced + 40 kg))</td><td class="n">20 %</td></tr>
+    <tr><th>Welfare</th><td>the average health score of the five animals</td><td class="n">20 %</td></tr>
+    <tr><th>Hygiene</th><td>100 − 5 for every dung pat waiting − 2.5 for every hour beyond 13 since the last shed wash</td><td class="n">10 %</td></tr>
+  </tbody>
+</table></div>
+<pre class="formula">farm score = 0.25 × (water reuse × 2, at most 100)
+           + 0.25 × renewable power
+           + 0.20 × waste collected
+           + 0.20 × welfare
+           + 0.10 × hygiene                      rounded to a whole number</pre>
+<p>Water reuse is counted double because drinking water must always be fresh, so reuse can never get near 100 %. Reusing half of all water already earns full marks.</p>
+<h3 id="score-compare">The same day in four kinds of weather</h3>
+<p>This table is computed in your browser. Each column is a separate run of the farm engine from midnight to midnight.</p>
+<div class="table-wrap" id="scenTable" data-fig="scen"><p style="padding:10px 14px;margin:0;color:#5d6f62">Running four farm days…</p></div>
+<p class="tiles-note" id="scenWarn" role="status"></p>
+<div class="callout note"><p>The KPIs and the score are running values since the twin was opened, not values for one day, so each column also contains the 16 quiet sunny hours before its midnight. The totals above the KPI rows are for the 24 hours only.</p></div>
+<p>Read it across. Rain gives the farm far more recycled water, and almost no solar energy, so the biogas generator carries the day. A heat wave costs fresh water for the foggers, electricity for the fans, and milk.</p>
+<div class="jump">
+  <a href="index.html#step=thanks">See it in the live twin</a>
+  <a class="cow" href="journey.html#night">Walk it with Gauri</a>
+</div>
+</section>
+
+<!-- ============================================================ 14 -->
+<section id="hardware">
+<h2>Hardware: build and flash</h2>
+<p>The physical model has one electronic node. It reads the shed climate, shows it on the LCD, drives the pump, watches the gate, and serves all of it over Wi-Fi so the twin can show and control the real model.</p>
+<div class="callout note"><p>The firmware sketch was written to match the twin's API, but <strong>its author has not run it on hardware</strong>. Treat the wiring below as a careful starting point. Check every pin against your own board before you power the pump.</p></div>
+
+<h3 id="hw-bom">Bill of materials</h3>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Part</th><th class="n">Qty</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><th>NodeMCU or Wemos D1 mini (ESP8266)</th><td class="n">1</td><td>The controller and the Wi-Fi hotspot</td></tr>
+    <tr><th>DHT11 sensor</th><td class="n">1</td><td>Temperature and humidity, powered from 3V3</td></tr>
+    <tr><th>16 × 2 LCD with I2C backpack</th><td class="n">1</td><td>Address 0x27. Try 0x3F if the display stays blank. Powered from 5 V (VIN).</td></tr>
+    <tr><th>L293D motor driver</th><td class="n">1</td><td>Switches the pump</td></tr>
+    <tr><th>Small DC water pump</th><td class="n">1</td><td>With its own 5 to 9 V supply</td></tr>
+    <tr><th>IR obstacle sensor module</th><td class="n">1</td><td>At the gate</td></tr>
+    <tr><th>Red LED and 220 Ω resistor</th><td class="n">1 each</td><td>Flashes on each crossing</td></tr>
+    <tr><th>Jumper wires, USB cable</th><td></td><td></td></tr>
+  </tbody>
+</table></div>
+<p>The rest of the model is not electronic: the 3 × 2 ft board, grass sheet, cardboard shed, the mini solar panel with its battery and LED lights, the two tanks and the gravel, sand and charcoal filter.</p>
+
+<h3 id="hw-wiring">Wiring</h3>
+<figure class="fig">
+<div class="diagram"><svg class="dg" viewBox="0 0 860 390" role="img" aria-labelledby="wirT wirD">
+  <title id="wirT">Wiring of the ESP8266 node</title>
+  <desc id="wirD">The NodeMCU is in the centre. On its left, pin D4 goes to the DHT11 data pin, D2 and D1 go to the LCD's SDA and SCL, and D0 goes to the IR sensor output. On its right, D5, D6 and D7 go to the L293D's EN1, IN1 and IN2, and D8 goes through a 220 ohm resistor to the red LED. The L293D outputs drive the pump motor from a separate 5 to 9 volt supply.</desc>
+  <path class="wire" d="M240 100H350"/><path class="wire" d="M240 196H350"/><path class="wire" d="M240 224H350"/><path class="wire" d="M240 310H350"/>
+  <path class="wire" d="M510 100H620"/><path class="wire" d="M510 130H620"/><path class="wire" d="M510 160H620"/><path class="wire" d="M510 310H620"/>
+  <path class="e" marker-end="url(#ah)" d="M720 190V208"/>
+  <rect class="n2" x="350" y="30" width="160" height="330" rx="12"/>
+  <text class="h" x="430" y="58" text-anchor="middle">NodeMCU</text><text class="s" x="430" y="75" text-anchor="middle">ESP8266</text>
+  <text class="m" x="364" y="104">D4</text><text class="m" x="364" y="200">D2</text><text class="m" x="364" y="228">D1</text><text class="m" x="364" y="314">D0</text>
+  <text class="m" x="496" y="104" text-anchor="end">D5</text><text class="m" x="496" y="134" text-anchor="end">D6</text><text class="m" x="496" y="164" text-anchor="end">D7</text><text class="m" x="496" y="314" text-anchor="end">D8</text>
+  <text class="s" x="430" y="344" text-anchor="middle">3V3 · VIN (5 V) · GND</text>
+  <g class="pin"><circle cx="350" cy="100" r="3.5"/><circle cx="350" cy="196" r="3.5"/><circle cx="350" cy="224" r="3.5"/><circle cx="350" cy="310" r="3.5"/><circle cx="510" cy="100" r="3.5"/><circle cx="510" cy="130" r="3.5"/><circle cx="510" cy="160" r="3.5"/><circle cx="510" cy="310" r="3.5"/>
+  <circle cx="240" cy="100" r="3.5"/><circle cx="240" cy="196" r="3.5"/><circle cx="240" cy="224" r="3.5"/><circle cx="240" cy="310" r="3.5"/><circle cx="620" cy="100" r="3.5"/><circle cx="620" cy="130" r="3.5"/><circle cx="620" cy="160" r="3.5"/><circle cx="620" cy="310" r="3.5"/></g>
+  <rect class="n" x="40" y="62" width="200" height="78" rx="10"/><text x="56" y="86">DHT11</text><text class="m" x="228" y="104" text-anchor="end">DATA</text><text class="s" x="56" y="126">VCC to 3V3 · GND to GND</text>
+  <rect class="n" x="40" y="162" width="200" height="98" rx="10"/><text x="56" y="186">16 × 2 LCD, I2C</text><text class="m" x="228" y="200" text-anchor="end">SDA</text><text class="m" x="228" y="228" text-anchor="end">SCL</text><text class="s" x="56" y="248">VCC to VIN (5 V) · GND</text>
+  <rect class="n" x="40" y="282" width="200" height="78" rx="10"/><text x="56" y="306">IR sensor</text><text class="m" x="228" y="314" text-anchor="end">OUT</text><text class="s" x="56" y="344">LOW when it sees something</text>
+  <rect class="n" x="620" y="62" width="200" height="128" rx="10"/><text x="700" y="86">L293D driver</text><text class="m" x="632" y="104">EN1</text><text class="m" x="632" y="134">IN1</text><text class="m" x="632" y="164">IN2</text><text class="s" x="700" y="134">OUT1, OUT2</text><text class="s" x="700" y="150">to the pump motor</text>
+  <rect class="n" x="620" y="210" width="200" height="54" rx="10"/><text x="720" y="233" text-anchor="middle">Pump motor</text><text class="s" x="720" y="251" text-anchor="middle">own 5 to 9 V supply on VCC2</text>
+  <rect class="n" x="620" y="282" width="200" height="78" rx="10"/><text x="700" y="306">Red LED</text><text class="m" x="632" y="314">+</text><text class="s" x="636" y="344">through 220 Ω, then to GND</text>
+</svg></div>
+<figcaption>Signal wires only. Join every GND together: the board, the sensors, the L293D and the pump supply.</figcaption>
+</figure>
+<p>The same wiring as a table, copied from the header of the sketch:</p>
+<div class="code"><pre><code>DHT11  DATA -> D4      (VCC 3V3, GND)
+LCD    SDA  -> D2, SCL -> D1   (VCC 5V/VIN, GND)
+L293D  EN1  -> D5, IN1 -> D6, IN2 -> D7
+       OUT1/OUT2 -> pump motor, VCC2 -> pump supply (5-9 V), GNDs joined
+IR     OUT  -> D0      (most modules pull LOW when they see something)
+LED    red  -> D8 through a 220 ohm resistor to GND</code></pre></div>
+<div class="callout note"><p>Two things the sketch header does not spell out. The L293D chip also needs its own logic supply (the pin usually marked VCC1 or VSS) connected to 5 V. And if your IR module gives HIGH when it sees something, change <code>IR_ACTIVE_LOW</code> to <code>false</code> near the top of the sketch.</p></div>
+
+<h3 id="hw-flash">Flashing the board</h3>
+<ol class="steps">
+  <li>Install the Arduino IDE and add ESP8266 board support through the Boards Manager.</li>
+  <li>In the Library Manager install <b>DHT sensor library</b> by Adafruit together with <b>Adafruit Unified Sensor</b>, and <b>LiquidCrystal I2C</b> by Frank de Brabander.</li>
+  <li>Open <code>firmware/dairy_sense_esp8266/dairy_sense_esp8266.ino</code>.</li>
+  <li>Choose your board (NodeMCU or Wemos D1 mini) and its port, then upload.</li>
+  <li>Open the Serial Monitor at 115200 baud. You should see <code>Hotspot up, open http://192.168.4.1</code>. The LCD shows "Dairy Sense / starting..." and then the readings.</li>
+</ol>
+
+<h3 id="hw-hotspot">The hotspot</h3>
+<p>The board starts its own Wi-Fi network, so the exhibition hall needs no router and no internet.</p>
+<div class="table-wrap"><table class="mid">
+  <tbody>
+    <tr><th>Wi-Fi name</th><td><code>DairySense</code></td></tr>
+    <tr><th>Password</th><td><code>milkday2026</code></td></tr>
+    <tr><th>Address</th><td><code>http://192.168.4.1</code></td></tr>
+  </tbody>
+</table></div>
+<p>Join that network with a phone and open the address. You get a small status page that refreshes every 3 seconds: temperature, humidity, the pump state with "switch on" and "switch off" links, and the number of gate crossings. That page alone is a complete demonstration of ESP8266 monitoring and control, without the twin.</p>
+
+<h3 id="hw-link">Linking the twin</h3>
+<ol class="steps">
+  <li>Connect the laptop that shows the twin to the <code>DairySense</code> Wi-Fi. The twin itself keeps working, because it needs no internet.</li>
+  <li>In the twin press <b>Link device</b>. Leave the address as <code>192.168.4.1</code> and press <b>Connect</b>.</li>
+  <li>The status line turns green: "Connected to 192.168.4.1: 31.5 °C, 64 % humidity, pump OFF." The phone app's header changes to "LIVE device" and the shed climate card says "LIVE DHT11".</li>
+</ol>
+<p>From then on:</p>
+<ul>
+  <li><strong>The real DHT11 drives the twin's shed climate.</strong> Warm the sensor with your hand or your breath and the twin's THI rises. Past 79, its fans and foggers start.</li>
+  <li><strong>The twin's pump decision drives the real pump.</strong> Whenever the pump in the twin switches, in Auto or by the phone's button, the twin sends the command and the L293D switches the real motor.</li>
+  <li><strong>A real beam break flashes the twin's gate LED.</strong> The device keeps its own crossings count. The twin's count still follows its simulated animals.</li>
+</ul>
+<p>The twin asks the device for its state every 2 seconds. If three requests in a row fail, it quietly goes back to simulated sensors and keeps retrying. <b>Disconnect</b> does the same on purpose.</p>
+<div class="callout note"><p>Open the twin by double-clicking <code>index.html</code>, as usual. If you ever put the pages on a website served over <code>https</code>, browsers will refuse to call a plain <code>http</code> device, and the link will not work.</p></div>
+
+<h3 id="hw-mock">Trying it without hardware</h3>
+<p>A small program pretends to be the ESP8266. It needs Node.js.</p>
+<div class="code"><pre><code>npm run mock-device</code></pre></div>
+<p>Then press <b>Link device</b> in the twin and connect to <code>localhost:8266</code>. The mock serves a hot shed whose temperature drifts between 31 and 36 °C with 52 to 64 % humidity, trips its IR beam now and then, and prints every pump command it receives. That shed is hot enough to keep the twin's cooling on. Set the <code>PORT</code> environment variable to use a different port.</p>
+<div class="jump">
+  <a href="index.html#step=monitor">See it in the live twin</a>
+</div>
+</section>
+
+<!-- ============================================================ 15 -->
+<section id="api">
+<h2>Device API</h2>
+<p>The ESP8266 answers three plain HTTP addresses. Every answer is JSON, and every answer carries headers that let a web page on another address read it (<code>Access-Control-Allow-Origin: *</code>), plus <code>Cache-Control: no-store</code>.</p>
+<h3 id="api-state"><code>GET /api/state</code></h3>
+<p>Returns everything the device knows.</p>
+<div class="code"><pre><code>{"temp":31.5,"hum":64,"pump":false,"ir":false,"crossings":12,"uptime":345}</code></pre></div>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><th><code>temp</code></th><td>Shed temperature in °C, one decimal. <code>null</code> until the DHT11 has given a first good reading.</td></tr>
+    <tr><th><code>hum</code></th><td>Relative humidity in percent, whole number. <code>null</code> until the first good reading.</td></tr>
+    <tr><th><code>pump</code></th><td><code>true</code> while the pump is running.</td></tr>
+    <tr><th><code>ir</code></th><td><code>true</code> if the beam has been broken since the last time <code>/api/state</code> was read. Reading it resets it, so a short crossing between two polls is not missed.</td></tr>
+    <tr><th><code>crossings</code></th><td>Beam breaks counted since the board was switched on.</td></tr>
+    <tr><th><code>uptime</code></th><td>Seconds since the board was switched on.</td></tr>
+  </tbody>
+</table></div>
+<h3 id="api-pump"><code>GET /api/pump?on=1</code></h3>
+<p>Switches the pump: <code>on=1</code> for on, <code>on=0</code> for off. It answers with the same JSON as <code>/api/state</code>, showing the new pump state. Without the <code>on</code> parameter it changes nothing and just reports.</p>
+<div class="code"><pre><code>GET http://192.168.4.1/api/pump?on=1
+
+{"temp":31.5,"hum":64,"pump":true,"ir":false,"crossings":12,"uptime":351}</code></pre></div>
+<p>As a safety measure the firmware switches the pump off by itself if the sensor ever reports more than 60 °C, which can only mean the reading is nonsense.</p>
+<h3 id="api-other">Everything else</h3>
+<ul>
+  <li><code>GET /</code> returns the small human-readable status page described in <a href="#hw-hotspot">The hotspot</a>.</li>
+  <li>Any other address returns status 404 with <code>{"error":"not found"}</code>.</li>
+</ul>
+<p>You can try the API from any browser or from a terminal on a computer that has joined the hotspot:</p>
+<div class="code"><pre><code>curl http://192.168.4.1/api/state
+curl "http://192.168.4.1/api/pump?on=1"</code></pre></div>
+</section>
+
+<!-- ============================================================ 16 -->
+<section id="demo-script">
+<h2>Five-minute demo script</h2>
+<p>This script follows the guided tour. One person clicks while another speaks, or one person does both. Keep the speed at <b>1x</b> unless the script says otherwise. Times are a guide.</p>
+<div class="callout note"><p><strong>Before the judges arrive:</strong> open <code>index.html</code>, press <b>Full screen</b> (top right of the landing), and leave the sleeping farm showing. If something goes wrong during the demo, reload the page. It starts fresh at dawn in two seconds.</p></div>
+
+<div class="script"><h4><span class="time">0:00</span>Wake the farm, then the introduction</h4>
+<p class="do">Press <b>Wake the farm</b>. While the camera visits each system, read out one or two of the live readings. When the menu appears, press <b>Start the guided tour</b>.</p>
+<p class="say">This is Dairy Sense, a Sustainable Smart Dairy Farm. On the table is our model. On the screen is its digital twin: the same farm, running live. One farm day takes two minutes here. Our aim is a dairy farm that is cleaner, smarter and wastes nothing.</p></div>
+
+<div class="script"><h4><span class="time">0:25</span>Stop 2 · Farm base and cow shed</h4>
+<p class="do">Press <b>Next</b>. Press <b>Skip to milking time</b>. When the animals reach the trough, press <b>Wash the shed</b>.</p>
+<p class="say">The farm sits on a 3 by 2 foot board. We have three cows and two buffaloes, and nobody is moving them. Each decides for herself when to graze, drink and rest. They are milked at six in the morning and five in the evening, and after each milking the shed is washed.</p></div>
+
+<div class="script"><h4><span class="time">0:55</span>Stop 3 · Solar energy</h4>
+<p class="do">Press <b>Next</b>. Press <b>Skip to night</b>, wait for the lamps, then press <b>Back to a sunny day</b>.</p>
+<p class="say">An 800 watt panel charges a 3 kilowatt-hour battery in the day. At night the lights switch on by themselves and run from the battery. On a sunny day this farm takes nothing from the grid.</p></div>
+
+<div class="script"><h4><span class="time">1:25</span>Stop 4 · Water recycling</h4>
+<p class="do">Press <b>Next</b>. Press <b>Wash the shed</b> and point at the blue beads. Optionally press <b>Make it rain</b>, then <b>Back to a sunny day</b>.</p>
+<p class="say">Used wash water drains into the collection tank. It passes through gravel, sand and charcoal, and the pump lifts it to the storage tank to be used again for washing, cooling and the fodder crop. Rain from the roof is collected too. Drinking water always comes from the fresh line.</p></div>
+
+<div class="script"><h4><span class="time">1:55</span>Stop 5 · Smart monitoring</h4>
+<p class="do">Press <b>Next</b>. Press <b>Start a heat wave</b>. Point at the phone's Farm tab: the THI marker moves right and the chip changes to "Fans + foggers ON". Press <b>Back to a sunny day</b>.</p>
+<p class="say">A DHT11 sensor measures temperature and humidity in the shed. The ESP8266 sends the reading to the farmer's phone by Wi-Fi. From the two we calculate THI, the heat stress index. When it crosses 79, fans and foggers start by themselves. The L293D motor driver lets the small controller switch the pump.</p>
+<p class="do">If the real model is linked: breathe on the DHT11 and let the judges watch the twin react.</p></div>
+
+<div class="script"><h4><span class="time">2:30</span>Stop 6 · Animal detection</h4>
+<p class="do">Press <b>Next</b>. Press <b>Call the herd in for milking</b> and point at the red LED on the gate.</p>
+<p class="say">An infrared beam crosses the gate. Every animal that passes breaks it, the LED flashes, and the controller counts. The farmer knows how many animals are inside without walking to the shed.</p></div>
+
+<div class="script"><h4><span class="time">2:50</span>Stop 7 · AI health belt</h4>
+<p class="do">Press <b>Next</b>. Press <b>Give this cow a fever</b>. Her record opens in the phone. Keep talking for about ten seconds while the temperature chart climbs. When the red alert appears, press <b>Thermal view on / off</b>, then <b>Call the vet</b>, then <b>Thermal view on / off</b> again.</p>
+<p class="say">Every animal wears a belt with five sensors: temperature, heart rate, activity, rumination and GPS. The AI learns what is normal for each animal. We have just given this cow a fever and told nobody. Watch her temperature. There: the AI has caught it, about an hour and a half of farm time after it began, and it tells the farmer why and what to do. A farmer would normally notice the next day.</p></div>
+
+<div class="script"><h4><span class="time">3:40</span>Stop 8 · GPS tracking and virtual fence</h4>
+<p class="do">Press <b>Next</b>. Press <b>Leave the side gate open</b>. Watch the Map tab. When the alert arrives, press <b>Guide her back</b>. While she walks back, point at the two grazing cells.</p>
+<p class="say">Each belt also sends its position. This is the live map. We have left a gate open, and one animal is wandering out. The moment she crosses the geofence the farmer gets an alert, sends an audio cue to her belt, and she walks back. The same idea gives us a fence with no wire: the herd grazes one half of the pasture while the other half regrows.</p></div>
+
+<div class="script"><h4><span class="time">4:15</span>Stop 9 · Biogas and compost</h4>
+<p class="do">Press <b>Next</b>. Press <b>Fast-forward one day</b>.</p>
+<p class="say">A small rover collects the dung. In the digester it becomes biogas, which cooks food in place of LPG and runs a generator when the battery is low. The slurry that is left becomes compost, the compost grows fodder, and the fodder feeds the herd.</p></div>
+
+<div class="script"><h4><span class="time">4:35</span>Stop 10 · How everything connects</h4>
+<p class="do">Press <b>Next</b>.</p>
+<p class="say">Here are all the loops at once. The sun runs the pump. The water grows the fodder. The fodder feeds the herd. The dung makes gas and compost. And the sensors watch over all of it.</p></div>
+
+<div class="script"><h4><span class="time">4:50</span>Thank you</h4>
+<p class="do">Press <b>Next</b>. The card shows the totals for your session.</p>
+<p class="say">In these few minutes the farm has recycled this much water, made this much solar energy and biogas, and collected this much milk. Healthy animals, smart farming, a sustainable future. Thank you.</p></div>
+
+<h3 id="demo-tips">Tips for the day</h3>
+<ul>
+  <li><strong>Nobody at the stall?</strong> Tick <b>Auto-play the tour</b>. The twin runs the whole story by itself in a loop, pressing the demonstration buttons for you.</li>
+  <li><strong>A judge asks about one part.</strong> Click its floating label on the board, or one of the dots under the tour card.</li>
+  <li><strong>Prefer the fever demo.</strong> It is caught about one and a half farm hours after it starts, which is under ten seconds at 1x. Estrus and lameness usually take two to four farm hours (10 to 20 seconds at 1x), so show them if you have time to wait.</li>
+  <li><strong>A judge wants the full story of one animal.</strong> Open <a href="journey.html">Cow Flow</a> and scroll.</li>
+  <li><strong>The 3D is slow on the hall's laptop.</strong> The twin lowers its own picture quality until it runs smoothly. Give it a few seconds, and close other programs.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 17 -->
+<section id="viva">
+<h2>Viva questions</h2>
+<p>Likely questions from judges, with short answers that match what the project really does.</p>
+
+<h4>1. What is a digital twin?</h4>
+<p>A computer model of a real system that behaves like it. Ours has the same parts as the tabletop model, follows the same rules, and can be linked to the real sensor so that the two move together.</p>
+<h4>2. Why does a dairy farm need to be "sustainable"?</h4>
+<p>A dairy uses a lot of water and electricity and produces a lot of dung. If the water is reused, the power comes from the sun, and the dung becomes gas and compost, the farm costs less to run and pollutes less.</p>
+<h4>3. What is THI and why do you use it instead of temperature?</h4>
+<p>The Temperature-Humidity Index. Cattle cool themselves by evaporation, which works badly in damp air. THI combines both: (1.8T + 32) − (0.55 − 0.0055 RH)(1.8T − 26). Below 72 is comfortable, 72 to 79 mild stress, 79 to 89 heat stress, 89 and above danger.</p>
+<h4>4. Why do the fans start at 79 but stop at 76.5?</h4>
+<p>That gap is hysteresis. With one threshold the fans would switch on and off every few seconds when the shed sits near it. Two thresholds make it switch once and stay.</p>
+<h4>5. What does the L293D do? Why not connect the pump straight to the ESP8266?</h4>
+<p>An ESP8266 pin gives only a few milliamps at 3.3 V. A pump motor needs far more, at 5 to 9 V. The L293D takes the small control signal and switches the pump's own supply.</p>
+<h4>6. Why does the ESP8266 make its own hotspot?</h4>
+<p>So the project works anywhere, with no router and no internet. A phone or laptop joins the network "DairySense" and opens 192.168.4.1.</p>
+<h4>7. Can the animals drink the recycled water?</h4>
+<p>No. Gravel, sand and charcoal remove dirt, colour and smell, but not germs. Recycled water is used for washing, cooling and irrigation. Drinking water comes from the fresh line.</p>
+<h4>8. How does the pump know when to run?</h4>
+<p>It starts when the collection tank has more than 110 L and the storage tank is under 93 %. It stops when the collection tank is under 25 L or the storage tank is 98 % full. In manual mode it still stops itself if it would run dry.</p>
+<h4>9. What happens on a cloudy or rainy day?</h4>
+<p>Solar output falls to 36 % when cloudy and 14 % in rain. The battery covers the gap. If it drops under 30 %, the biogas generator starts. The grid is the last resort.</p>
+<h4>10. How does the IR sensor know which animal passed, and which way?</h4>
+<p>It does not. One beam only knows that something passed, so the real model counts crossings. The twin can show names and directions because the simulation knows where each animal is. Direction on real hardware would need two beams. Identity needs the belt.</p>
+<h4>11. Is the health belt real?</h4>
+<p>No. It is simulated in the twin. Belts with these sensors do exist for real cattle. Ours shows the idea and the decision logic.</p>
+<h4>12. Is it really artificial intelligence?</h4>
+<p>It is an explainable expert system. It learns a baseline for each animal from a day of her own data, then scores each new reading against it with fixed rules. It is not a trained neural network. Its advantage is that it can state its reason.</p>
+<h4>13. Why a baseline for each animal instead of one limit for all?</h4>
+<p>Animals differ. Our buffaloes run at 38.2 °C and our Holstein cross at 38.6 °C. One fixed limit would miss a fever in one and raise false alarms for the other.</p>
+<h4>14. How does it tell a fever from a hot day?</h4>
+<p>On a hot day the whole herd warms up and the shed THI is high, so the AI subtracts the expected heat effect before judging fever. A fever is one animal hot on her own, usually chewing the cud less.</p>
+<h4>15. What is rumination and why measure it?</h4>
+<p>Chewing the cud: bringing food back up to chew it again. A healthy cow does it for hours a day, mostly lying down. A drop is one of the earliest signs of illness.</p>
+<h4>16. How does detecting estrus help the farmer?</h4>
+<p>A cow can be bred only in a short window. A cow in heat is restless: her activity rises well above her normal. The belt spots that and tells the farmer the best breeding window is the next 12 to 18 hours.</p>
+<h4>17. What is a geofence, and what is a virtual fence?</h4>
+<p>A geofence is a boundary on the GPS map. If a belt reports a position outside it, the farmer is alerted. A virtual fence uses the same idea inside the pasture: the belt gives an audio cue at an invisible line, so the herd grazes one half while the other half regrows, with no wire or posts.</p>
+<h4>18. How much biogas does the farm make?</h4>
+<p>In the model, each kilogram of dung digested gives 0.042 m³ of gas, and the recorded sunny day at the top of this page produces close to 3 m³. These are model values chosen so the loop is visible, not measurements.</p>
+<h4>19. How is the farm score calculated?</h4>
+<p>From five percentages: water reuse (25 %, counted double), renewable power (25 %), waste collected (20 %), animal welfare (20 %) and hygiene (10 %).</p>
+<h4>20. Are the numbers real?</h4>
+<p>They are illustrative. The rules and their thresholds are sensible, but the quantities were chosen for a clear demonstration, and time is compressed. The only real measurement is the DHT11 when the hardware is linked.</p>
+<h4>21. What would you improve next?</h4>
+<p>Test the firmware on real hardware. Add a second IR beam for direction, and level sensors in the real tanks so the pump runs from real water levels. Build one real belt with a temperature sensor and an accelerometer, and compare its data with the model.</p>
+</section>
+
+<!-- ============================================================ 18 -->
+<section id="develop">
+<h2>Develop and extend</h2>
+<p>The project is plain JavaScript. The only tools are Node.js, the bundler esbuild and the 3D library three.js, both installed by <code>npm install</code>.</p>
+<h3 id="dev-commands">Commands</h3>
+<div class="code"><pre><code>npm install          <span class="c"># once</span>
+npm run build        <span class="c"># bundles src/ into dist/app.js, dist/journey.js and dist/docs.js</span>
+npm run dev          <span class="c"># the same, rebuilding whenever a file changes</span>
+npm test             <span class="c"># runs the farm engine for many farm days and checks it, then the coat repaint</span>
+npm run mock-device  <span class="c"># a stand-in for the ESP8266 on localhost:8266</span></code></pre></div>
+<p>Each page loads one bundled script from <code>dist/</code>. That is why the pages open by double-click with no web server: there is nothing to fetch. After you change anything in <code>src/</code>, run <code>npm run build</code> and reload the page.</p>
+
+<h3 id="dev-files">File map</h3>
+<div class="table-wrap"><table class="wide">
+  <thead><tr><th>File</th><th>What it holds</th></tr></thead>
+  <tbody>
+    <tr><th><code>index.html</code>, <code>journey.html</code>, <code>docs.html</code></th><td>The three pages.</td></tr>
+    <tr><th><code>src/sim.js</code></th><td><strong>The farm engine.</strong> Pure logic, no graphics: energy, water, climate and THI, herd behaviour, belt readings and AI, GPS, pasture, biogas, compost, fodder, alerts, KPIs. Every number on every page comes from here.</td></tr>
+    <tr><th><code>src/layout.js</code></th><td>Where everything stands on the board, the GPS scale, the geofence and the grazing cells.</td></tr>
+    <tr><th><code>src/trace.js</code></th><td><code>recordDay()</code> plays one farm day on the engine and records it. <code>sample()</code> reads the recording at any hour. Used by Cow Flow and by this page.</td></tr>
+    <tr><th><code>src/main.js</code></th><td>Starts the live twin: renderer, camera, the frame loop, picking an animal by clicking.</td></tr>
+    <tr><th><code>src/world.js</code>, <code>src/kit.js</code>, <code>src/animals.js</code></th><td>The 3D model of the board, a small kit of shapes, and the dung rover.</td></tr>
+    <tr><th><code>src/flows.js</code></th><td>The coloured beads that travel along pipes and wires whenever that resource is really moving.</td></tr>
+    <tr><th><code>src/tracking.js</code>, <code>src/trackui.js</code></th><td>The GPS layer on the 3D board, and the Map tab, tracking cards, herd register and CSV report in the phone app.</td></tr>
+    <tr><th><code>src/ui.js</code>, <code>src/tour.js</code></th><td>The top bar, tour card, phone app, KPI strip and labels, and the text of the 11 tour stops.</td></tr>
+    <tr><th><code>src/coats.js</code>, <code>src/standee.js</code>, <code>src/herdlook.js</code>, <code>src/lookui.js</code>, <code>src/cowart.js</code></th><td>The herd's appearance: coat colours and the pixel repaint, the cut-out animals, which view is in use, and the colour controls.</td></tr>
+    <tr><th><code>src/live.js</code></th><td>The link to the real ESP8266.</td></tr>
+    <tr><th><code>src/journey/</code>, <code>src/cow.js</code></th><td>The Cow Flow page: its stops, scenery and stations, and Gauri's animated 3D body.</td></tr>
+    <tr><th><code>src/docs.js</code>, <code>src/docs.css</code></th><td>This page: contents, search and the live figures.</td></tr>
+    <tr><th><code>firmware/</code></th><td>The Arduino sketch for the ESP8266, and <code>mock-device.mjs</code>.</td></tr>
+    <tr><th><code>test/</code></th><td>Headless checks of the engine and of the coat repaint.</td></tr>
+    <tr><th><code>art/</code>, <code>tools/build_cow_art.py</code></th><td>The source picture of the cow and the script that splits it into layers.</td></tr>
+    <tr><th><code>build.mjs</code></th><td>The build script.</td></tr>
+  </tbody>
+</table></div>
+
+<h3 id="dev-tick">One tick of the simulation</h3>
+<p>Time moves in small steps called ticks, each at most 0.04 farm hours (2.4 farm minutes). At 1x speed, one second of real time is 0.2 farm hours, so about five ticks. Every tick does the same things in the same order:</p>
+<ol>
+  <li><strong>Clock and sun.</strong> Advance the time. At midnight reset the day's counters. At 09:00 check the herd register.</li>
+  <li><strong>Climate.</strong> Outside air, shed air (or the real DHT11 if linked), the cooling switch, THI.</li>
+  <li><strong>Daily routine.</strong> The milking flag, milk yields at 07:00 and 18:00, feed trough refills.</li>
+  <li><strong>Biogas plant.</strong> Feed the digester, digest, fill the holder, burn at the stove, decide the generator.</li>
+  <li><strong>Fodder plot.</strong> Spread compost, dry the soil, decide irrigation, grow the crop, harvest.</li>
+  <li><strong>Water.</strong> Rain, washing, fogging, irrigation, the pump, the fresh top-up, the drinking trough.</li>
+  <li><strong>Herd.</strong> Each animal: needs, dung, movement, the gate, GPS odometer and geofence, then her belt readings.</li>
+  <li><strong>Pasture and GPS.</strong> Regrow the grass, rotate the cells, take a GPS fix from every belt.</li>
+  <li><strong>Rover.</strong> Collect and deliver dung.</li>
+  <li><strong>Energy.</strong> Lights, chiller, solar, generator, total load, battery, grid.</li>
+  <li><strong>Belt AI.</strong> Every 15 farm minutes, <code>evaluate()</code> each animal.</li>
+  <li><strong>Alerts and KPIs.</strong> Farm-level alerts, the five KPIs and the score.</li>
+</ol>
+<p>The engine uses its own seeded random numbers, so a fresh engine always behaves the same way. That is what makes the tests, and the figures on this page, repeatable.</p>
+<div class="callout try"><p>With the twin open, press <kbd>F12</kbd> and type in the console. The engine is at <code>dairySense.sim</code>. Try <code>dairySense.sim.inject('DS-03', 'fever')</code>, <code>dairySense.sim.energy</code>, or <code>dairySense.sim.advance(24)</code> to skip a day at once.</p></div>
+
+<h3 id="dev-sensor">Adding a sensor</h3>
+<p>Say you want a real water-level sensor on the storage tank.</p>
+<ol class="steps">
+  <li><strong>Firmware.</strong> Read the sensor in <code>loop()</code> and add a field to <code>stateJson()</code>, for example <code>"level":72</code>. Add the same field to <code>firmware/mock-device.mjs</code> so you can test without hardware.</li>
+  <li><strong>Link.</strong> In <code>src/live.js</code>, copy the new field into <code>sim.live</code> inside <code>poll()</code>, the way <code>temp</code> and <code>hum</code> are copied.</li>
+  <li><strong>Engine.</strong> In <code>tick()</code> in <code>src/sim.js</code>, use it when it is present, the way the climate block uses <code>s.live.temp</code>. Decide what the farm should do with it, and raise an alert with <code>condition()</code> if needed.</li>
+  <li><strong>Interface.</strong> Show it in <code>refreshFarm()</code> in <code>src/ui.js</code>.</li>
+  <li><strong>Recording.</strong> To have it in Cow Flow and in the charts here, add it to the row in <code>recordDay()</code> and to the <code>NUM</code> list in <code>src/trace.js</code>.</li>
+  <li><strong>Test.</strong> Add a check to <code>test/sim.test.mjs</code>, then run <code>npm test</code> and <code>npm run build</code>.</li>
+</ol>
+
+<h3 id="dev-animal">Adding an animal</h3>
+<ol class="steps">
+  <li>Add a line to the <code>HERD</code> list at the top of <code>src/sim.js</code>: tag, name, kind, breed, coat, normal temperature, resting heart rate, litres per milking and heat sensitivity.</li>
+  <li>Add a matching line to the <code>RECORDS</code> list just below it. The two lists are paired by position.</li>
+  <li>Use a <code>coat</code> key that <code>src/coats.js</code> knows: <code>holstein</code>, <code>sahiwal</code>, <code>gir</code>, <code>murrah</code> or <code>murrah2</code>. An unknown key falls back to the Holstein coat.</li>
+  <li>Run <code>npm test</code>, then <code>npm run build</code>.</li>
+</ol>
+<div class="callout note"><p>The board is drawn for five animals. The feed trough has room for five places, the shed for five resting spots, and the GPS map has five track colours in <code>src/tracking.js</code>. A sixth animal will run in the engine, but she will stand past the end of the trough and outside the shed wall at night until <code>feedSlot()</code> and <code>restSpot()</code> in <code>src/layout.js</code> and the colour list are widened. Replacing one of the five is the easy change.</p></div>
+</section>
+
+<!-- ============================================================ 19 -->
+<section id="glossary">
+<h2>Glossary</h2>
+<dl class="gloss">
+  <dt>API</dt><dd>A fixed set of addresses a program answers, so that other programs can talk to it. Here: <code>/api/state</code> and <code>/api/pump</code>.</dd>
+  <dt>Baseline</dt><dd>What is normal for one particular animal, learned from her own data.</dd>
+  <dt>Biogas</dt><dd>Gas made when bacteria break down dung without air. Mostly methane. It burns like LPG.</dd>
+  <dt>Compost</dt><dd>Rotted organic matter that feeds the soil. Here it is made from digester slurry.</dd>
+  <dt>DHT11</dt><dd>A cheap sensor that measures air temperature and humidity.</dd>
+  <dt>Digester</dt><dd>The sealed tank where dung turns into biogas. Ours is the floating-drum type: the gas lifts a drum.</dd>
+  <dt>Digital twin</dt><dd>A computer model that behaves like a real system and can be linked to it.</dd>
+  <dt>ESP8266</dt><dd>A small, cheap microcontroller with Wi-Fi built in. NodeMCU and Wemos D1 mini are boards that carry one.</dd>
+  <dt>Estrus</dt><dd>"In heat": the short period when a cow can be bred. Not the same as heat stress.</dd>
+  <dt>Farm hour</dt><dd>One hour of simulated time. It takes 5 real seconds at 1x speed.</dd>
+  <dt>Fodder</dt><dd>Green crop grown to feed cattle.</dd>
+  <dt>Geofence</dt><dd>A boundary on a GPS map that raises an alert when crossed.</dd>
+  <dt>Hotspot</dt><dd>A Wi-Fi network created by a device itself. The ESP8266 makes one named DairySense.</dd>
+  <dt>Hysteresis</dt><dd>Using one threshold to switch on and a different one to switch off, so a device does not chatter.</dd>
+  <dt>I2C</dt><dd>A two-wire connection (SDA and SCL) used by the LCD.</dd>
+  <dt>IR sensor</dt><dd>An infrared light and detector. When something blocks or reflects the beam, its output changes.</dd>
+  <dt>JSON</dt><dd>A simple text format for data, like <code>{"temp":31.5}</code>.</dd>
+  <dt>KPI</dt><dd>Key performance indicator: one number that sums up how well something is going.</dd>
+  <dt>kWh</dt><dd>Kilowatt-hour, a unit of energy. A 1000 W load running for one hour uses 1 kWh.</dd>
+  <dt>L293D</dt><dd>A motor driver chip. It lets a small control signal switch a motor's larger supply.</dd>
+  <dt>Lameness</dt><dd>Pain in a foot or leg that makes an animal walk slowly or unevenly.</dd>
+  <dt>LPG</dt><dd>Liquefied petroleum gas: the bottled cooking gas that biogas replaces.</dd>
+  <dt>Rumination</dt><dd>Chewing the cud. A healthy cow does it for hours a day.</dd>
+  <dt>Slurry</dt><dd>The wet material left in the digester after the gas has come off.</dd>
+  <dt>THI</dt><dd>Temperature-Humidity Index: one number for how hot the air feels to cattle.</dd>
+  <dt>Tick</dt><dd>One small step of the simulation, at most 2.4 farm minutes.</dd>
+  <dt>Virtual fence</dt><dd>A fence that exists only on the map. The belt cues the animal to turn back.</dd>
+  <dt>HF cross, Sahiwal, Gir, Murrah</dt><dd>The breeds in the herd. HF is Holstein-Friesian, a high-yielding European dairy breed. Sahiwal and Gir are Indian zebu breeds that stand heat well. Murrah is a dairy buffalo.</dd>
+</dl>
+</section>
+
+<!-- ============================================================ 20 -->
+<section id="limits">
+<h2>Limits and honesty</h2>
+<p>A model is useful only if you know where it stops being true. These are the limits of this one.</p>
+<h3 id="lim-time">Time is compressed</h3>
+<ul>
+  <li>One farm hour takes 5 seconds at 1x. A day takes two minutes.</li>
+  <li>The digester and the fodder crop are speeded up much more than that. The model's digester works through its contents in hours and its crop is ready to cut every four or five farm days, which is about ten minutes at 1x, so that the loop can be seen in a short demonstration. A real digester needs weeks, and a real fodder crop needs weeks to months.</li>
+  <li>The animals walk slowly for the size of the farm, so that you can follow them with your eyes.</li>
+</ul>
+<h3 id="lim-numbers">The numbers are illustrative</h3>
+<ul>
+  <li>Panel size, battery size, tank sizes, flow rates, gas yields and milk yields are model values chosen to make each loop visible and to keep the farm in balance. They are not measurements from a farm, and they should not be used to design one.</li>
+  <li>The THI formula and its bands are standard. The thresholds for switching the cooling, the pump and the generator are sensible choices, not standards.</li>
+  <li>The farm score is our own formula. It is a way to compare one day with another, not an official rating.</li>
+</ul>
+<h3 id="lim-sim">What is simulated and what is real</h3>
+<div class="table-wrap"><table class="mid">
+  <thead><tr><th>Part</th><th>On the physical model</th><th>In the twin</th></tr></thead>
+  <tbody>
+    <tr><th>DHT11, LCD, ESP8266, L293D and pump, IR gate, LED</th><td>Real electronics</td><td>Simulated, or driven by the real ones when linked</td></tr>
+    <tr><th>Solar panel, battery, lights, tanks and filter</th><td>Real, at model size</td><td>Simulated at farm size</td></tr>
+    <tr><th>Health belt, GPS, virtual fence</th><td>Not built</td><td>Simulated</td></tr>
+    <tr><th>Dung rover, digester, generator, compost, fodder crop</th><td>Shown as a model</td><td>Simulated</td></tr>
+    <tr><th>The animals</th><td>Models</td><td>Simulated behaviour and physiology</td></tr>
+  </tbody>
+</table></div>
+<h3 id="lim-ai">The belt AI</h3>
+<ul>
+  <li>It is a set of explainable rules tuned on simulated animals. It has never seen data from a real cow.</li>
+  <li><strong>Fever</strong> detection is quick and steady: between one and a quarter and one and three quarter farm hours in every run we tried.</li>
+  <li><strong>Lameness</strong> depends on the animal walking, so it takes longer and varies: roughly one and a half to four farm hours in our runs.</li>
+  <li><strong>Estrus</strong> is the slowest to show. It needs about two hours of clearly raised activity. In the twin an animal in heat paces the paddock, and across 80 test runs (all five animals, four start times, four random seeds) she was caught after 1¼ to 4¾ farm hours, with no false alarms in 36 ordinary farm days. A real cow can be quieter than that, which is why real systems also use mounting sensors or milk tests.</li>
+  <li>The thermal view is a drawing of belt temperatures, not a thermal camera.</li>
+</ul>
+<h3 id="lim-hw">The hardware</h3>
+<ul>
+  <li>The firmware has not been tested on hardware by its author. See <a href="#hardware">Hardware</a>.</li>
+  <li>One IR beam counts crossings. It cannot tell direction or identity. See <a href="#gate">Animal detection gate</a>.</li>
+  <li>When the real device is linked, only the shed temperature and humidity, the gate flash and the pump are shared. The tank levels in the twin are still simulated, so the twin may switch the real pump when the real tank is empty. Keep an eye on the real pump.</li>
+  <li>The hotspot password is printed in the sketch and on this page. It is fine for an exhibition and not for anything that matters.</li>
+</ul>
+<h3 id="lim-page">This page</h3>
+<ul>
+  <li>The charts, calculators and comparison table are computed by the farm engine in your browser, so they always match the twin you have. The formulas and thresholds written in the text were copied from the code by hand. If someone changes the engine, the text must be checked again.</li>
+  <li>The recorded day is one particular run. The live twin will not repeat it exactly, because what you click changes what happens next.</li>
+</ul>
+</section>
+
+<footer class="foot">
+  <p><b>Dairy Sense</b> · Sustainable Smart Dairy Farm · National Milk Day 2026 · United University, Prayagraj</p>
+  <p><a href="index.html">Live twin</a> · <a href="journey.html">Cow Flow</a> · <a href="#overview">Back to the top</a></p>
+</footer>
+</main>
+</div>
+
+<div class="scrim" aria-hidden="true"></div>
+<button type="button" class="toc-toggle" aria-controls="sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Contents</button>
+<button type="button" class="totop" aria-label="Back to top" title="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<script src="dist/docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+/* The herd's colours: portraits, lens switch and legend, coat picker, splash line-up. */
+
+/* ------------------------------------------------------------ portraits */
+img.avatar { width: 38px; height: 38px; object-fit: cover; background: #e6f0dc; user-select: none; }
+img.avatar.big { width: 66px; height: 66px; }
+body[data-lens=thermal] img.avatar { background: #10122e; }
+.logo.cowlogo { background: #e6f0dc; overflow: hidden; box-shadow: 0 0 0 2px var(--amber); }
+.logo.cowlogo img.avatar { width: 100%; height: 100%; border: 0; box-shadow: none; }
+
+/* ---------------------------------------------------------- lens switch */
+.lens { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 2px 0; }
+.lens > span { font-weight: 700; color: var(--g9); font-size: 12.5px; }
+.lens .seg { background: #fff; }
+.lens-hint { margin: 5px 2px 9px; font-size: 11.5px; min-height: 2.8em; }
+
+#lensLegend { position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%); z-index: 13; display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 14px; border-radius: 20px; background: var(--card); box-shadow: var(--shadow); font-size: 12px; white-space: nowrap; max-width: calc(100vw - 20px); }
+#lensLegend[hidden] { display: none; }
+#lensLegend b { font: 700 13px var(--serif); color: var(--g9); }
+#lensLegend span { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+#lensLegend span i { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+#lensLegend .ramp { width: 150px; height: 11px; border-radius: 6px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .18); }
+#lensLegend .note { color: var(--muted); }
+#lensLegend button { border: 0; background: var(--g1); width: 24px; height: 24px; padding: 0; border-radius: 50%; font-size: 16px; line-height: 1; color: var(--g9); }
+body.intro #lensLegend { visibility: hidden; }
+
+/* ---------------------------------------------------------- coat picker */
+.sw-label { margin: 2px 0 5px; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.swatches { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 9px; }
+.sw { width: 30px; height: 30px; padding: 0; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--line); background: none; overflow: hidden; }
+.sw i { display: block; width: 100%; height: 100%; }
+.sw:hover { box-shadow: 0 0 0 2px var(--g5); }
+.sw.on { box-shadow: 0 0 0 2.5px var(--g9); }
+.picks { justify-content: flex-start; flex-wrap: wrap; margin-bottom: 6px; }
+.picks label { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 12px; }
+.picks input[type=color] { width: 30px; height: 26px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: #fff; cursor: pointer; }
+.picks .mini { margin-left: auto; }
+.picks .mini:disabled { opacity: .45; cursor: default; }
+.coatcard > .muted { margin: 0; font-size: 11.5px; }
+
+/* ------------------------------------------------------ splash line-up */
+/* Sits in the free space right of the title block, so it never covers the buttons. */
+#splashHerd { position: absolute; right: 2.5vw; bottom: 4vh; width: min(47vw - 70px, 900px); display: flex; align-items: flex-end; pointer-events: none; }
+#splashHerd figure { flex: 1 1 0; min-width: 0; margin: 0 0 0 -9%; text-align: center; animation: herdIn .7s cubic-bezier(.2, .9, .3, 1.2) both; animation-delay: calc(var(--i) * 90ms + 150ms); }
+#splashHerd figure:first-child { margin-left: 0; }
+#splashHerd img.avatar { width: 100%; height: auto; border: 0; border-radius: 0; box-shadow: none; background: none; display: block; filter: drop-shadow(0 14px 14px rgba(8, 26, 14, .45)); }
+#splashHerd figcaption { display: inline-flex; white-space: nowrap; align-items: center; gap: 6px; margin-top: 4px; padding: 3px 10px; border-radius: 12px; background: rgba(255, 255, 255, .94); color: var(--ink); font-weight: 700; font-size: 12.5px; }
+#splashHerd figcaption i { width: 8px; height: 8px; border-radius: 50%; }
+#splashHerd figcaption small { font-weight: 500; color: var(--muted); font-size: 11px; }
+@keyframes herdIn { from { opacity: 0; transform: translateY(26px) scale(.94); } }
+@media (max-width: 1500px) { #splashHerd figcaption small { display: none; } }
+@media (max-width: 1000px), (max-height: 560px) { #splashHerd { display: none; } }
+@media (max-width: 820px) { #lensLegend { bottom: calc(42vh + 20px); flex-wrap: wrap; white-space: normal; justify-content: center; border-radius: 14px; } #lensLegend .note { display: none; } }

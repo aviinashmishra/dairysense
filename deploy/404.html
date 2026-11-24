@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outside the geofence | Dairy Sense</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#07140f">
+<link rel="icon" type="image/png" href="/src/assets/icon.png">
+<style>
+  :root { --ink: #f6f2e4; --dim: rgba(246, 242, 228, .72); --amber: #f2b632; --night: #07140f; --edge: rgba(246, 242, 228, .18); --red: #ff8a7a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; background: radial-gradient(110% 80% at 70% 10%, #1b3550 0, #0b1d22 50%, var(--night) 100%); color: var(--ink); font: 15px/1.5 "Segoe UI", Calibri, system-ui, -apple-system, sans-serif; }
+  main { width: min(560px, 100%); }
+  .map { position: relative; width: 100%; aspect-ratio: 16 / 7; margin-bottom: 26px; }
+  .map svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .eyebrow { margin: 0; color: var(--amber); font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+  h1 { margin: 8px 0 10px; font: 700 clamp(34px, 7vw, 52px)/1.04 Cambria, Georgia, "Times New Roman", serif; }
+  p.lead { margin: 0 0 22px; color: var(--dim); max-width: 46ch; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; }
+  a.btn { display: inline-flex; align-items: center; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--edge); color: var(--ink); text-decoration: none; font-weight: 600; }
+  a.btn:hover { border-color: rgba(246, 242, 228, .5); }
+  a.btn.main { background: var(--amber); border-color: var(--amber); color: #2b2410; }
+  a:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .ping { animation: ping 1.8s ease-out infinite; transform-origin: center; transform-box: fill-box; }
+  @keyframes ping { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.6); opacity: 0; } }
+  .walk { animation: walk 3.2s ease-in-out infinite alternate; }
+  @keyframes walk { to { transform: translateX(-14px); } }
+  @media (prefers-reduced-motion: reduce) { .ping, .walk { animation: none; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="map" aria-hidden="true">
+    <svg viewBox="0 0 560 245">
+      <rect x="20" y="30" width="300" height="190" rx="18" fill="rgba(95,208,138,.10)" stroke="#5fd08a" stroke-width="2.5" stroke-dasharray="9 7"/>
+      <text x="38" y="58" fill="#5fd08a" font-size="13" font-weight="700" letter-spacing="2">SAFE ZONE</text>
+      <circle cx="96" cy="150" r="7" fill="#5fd08a"/><circle cx="140" cy="118" r="7" fill="#5fd08a"/><circle cx="182" cy="162" r="7" fill="#5fd08a"/><circle cx="230" cy="128" r="7" fill="#5fd08a"/>
+      <path d="M262 150 C 330 160, 360 110, 440 118" fill="none" stroke="rgba(255,138,122,.7)" stroke-width="2.5" stroke-dasharray="3 8" stroke-linecap="round"/>
+      <g class="walk"><circle class="ping" cx="452" cy="116" r="9" fill="none" stroke="#ff8a7a" stroke-width="2"/><circle cx="452" cy="116" r="9" fill="#ff8a7a"/></g>
+      <text x="408" y="88" fill="#ff8a7a" font-size="13" font-weight="700">you are here</text>
+    </svg>
+  </div>
+  <p class="eyebrow">Error 404 &middot; GPS alert</p>
+  <h1>You have wandered outside the geofence.</h1>
+  <p class="lead">There is no page at this address. On the farm, the health belt would play an audio cue and guide the animal back through the gate. These links do the same for you.</p>
+  <nav class="row" aria-label="Back to the farm">
+    <a class="btn main" href="/">Back to the farm</a>
+    <a class="btn" href="/journey">A day with Gauri</a>
+    <a class="btn" href="/docs">How it is built</a>
+  </nav>
+</main>
+</body>
+</html>

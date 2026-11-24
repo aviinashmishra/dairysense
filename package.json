@@ -1,0 +1,17 @@
+{
+  "name": "dairy-sense",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dairy Sense - a living 3D digital twin of a Sustainable Smart Dairy Farm",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs --watch",
+    "test": "node test/sim.test.mjs && node test/coats.test.mjs",
+    "mock-device": "node firmware/mock-device.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "three": "^0.170.0"
+  }
+}

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dairy Sense - Sustainable Smart Dairy Farm</title>
+<meta name="description" content="A living 3D model of a sustainable smart dairy farm: solar power, water recycling, biogas and AI health belts on five animals, all running live. Science project for National Milk Day 2026, United University, Prayagraj.">
+<meta name="theme-color" content="#07140f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dairy Sense">
+<meta property="og:title" content="Dairy Sense: wake up a smart dairy farm">
+<meta property="og:description" content="A living 3D smart dairy farm. Wake it up and watch solar, water, biogas and five AI health belts come online.">
+<meta property="og:url" content="/">
+<meta property="og:image" content="src/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="src/assets/og.png">
+<link rel="icon" type="image/png" href="src/assets/icon.png">
+<link rel="apple-touch-icon" href="src/assets/icon.png">
+<link rel="stylesheet" href="src/styles.css">
+<link rel="stylesheet" href="src/cowart.css">
+<link rel="stylesheet" href="src/landing.css">
+</head>
+<body class="intro">
+<canvas id="scene" aria-label="3D model of the Dairy Sense smart dairy farm"></canvas>
+<div id="labels"></div>
+
+<header id="topbar">
+  <div class="brand">
+    <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 3C9 3 4 9 4 15c0 1.6.4 3 1 4.200C7.500 13 12 9.500 17 8c-4 2.500-7.500 6.500-9.300 12.400.9.400 2 .6 3.300.6 6 0 10-5 9-18z"/></svg></span>
+    <div><b>Dairy Sense</b><small>Sustainable Smart Dairy Farm</small></div>
+  </div>
+  <div class="clock" title="Farm time">
+    <span id="clockIcon" class="clock-icon"></span>
+    <div><b id="clockTime">08:00</b><small id="clockDay">Day 1</small></div>
+    <div class="daybar"><i id="dayFill"></i></div>
+  </div>
+  <div class="group" role="group" aria-label="Time speed">
+    <button data-speed="0" title="Pause (Space)">Pause</button>
+    <button data-speed="1" class="on">1x</button>
+    <button data-speed="4">4x</button>
+    <button data-speed="12">12x</button>
+  </div>
+  <div class="group" role="group" aria-label="Weather">
+    <button data-weather="sunny" class="on">Sunny</button>
+    <button data-weather="cloudy">Cloudy</button>
+    <button data-weather="rain">Rain</button>
+  </div>
+  <button id="btnHeat" class="chipbtn" title="Adds 8 &deg;C to the weather">Heat wave</button>
+  <button id="btnNight" class="chipbtn">Skip to night</button>
+  <span class="spacer"></span>
+  <button id="btnFlows" class="chipbtn" title="Show every energy, water, data and waste loop (F)">Flows</button>
+  <button id="btnGps" class="chipbtn" title="Show GPS trails, locator beams, the geofence and the virtual fence (G)">GPS</button>
+  <button id="btnLabels" class="chipbtn on" title="Show labels (L)">Labels</button>
+  <button id="btnTour" class="chipbtn on">Guided tour</button>
+  <button id="btnLive" class="chipbtn" title="Link the real ESP8266 on the physical model">Link device</button>
+  <a class="chipbtn pagelink" href="journey.html" title="Cow Flow: walk one whole farm day with Gauri, step by step">Cow Flow</a>
+  <a class="chipbtn pagelink" href="docs.html" title="Documentation: how everything works">Docs</a>
+  <button id="btnFull" class="chipbtn" title="Full screen">Full screen</button>
+</header>
+
+<aside id="story" aria-live="polite">
+  <div class="story-head"><span id="stBadge" class="badge">1</span><div><h2 id="stTitle"></h2><p id="stKicker" class="kicker"></p></div><button id="stClose" class="x" title="Close the tour and explore freely">&times;</button></div>
+  <div id="stBody" class="story-body"></div>
+  <div id="stActions" class="actions"></div>
+  <div class="story-nav">
+    <button id="stPrev">&larr; Back</button>
+    <div id="stDots" class="dots"></div>
+    <button id="stNext" class="primary">Next &rarr;</button>
+  </div>
+  <label class="auto"><input type="checkbox" id="stAuto"> Auto-play the tour</label>
+</aside>
+
+<aside id="phone">
+  <div class="phone-frame">
+    <div class="app-bar"><b>Dairy Sense app</b><span id="syncDot" class="sync"><i></i><span id="syncText">ESP8266 linked</span></span></div>
+    <nav class="tabs"><button data-tab="farm" class="on">Farm</button><button data-tab="herd">Herd</button><button data-tab="map">Map</button><button data-tab="alerts">Alerts <span id="alertBadge" class="count" hidden>0</span></button></nav>
+    <div class="screen">
+      <section id="tab-farm"></section>
+      <section id="tab-herd" hidden></section>
+      <section id="tab-map" hidden></section>
+      <section id="tab-alerts" hidden></section>
+    </div>
+  </div>
+</aside>
+
+<footer id="kpis"></footer>
+<div id="toast" hidden></div>
+
+<div id="live" class="modal" hidden>
+  <div class="modal-card">
+    <h3>Link the physical model</h3>
+    <p>Flash <code>firmware/dairy_sense_esp8266</code> to the ESP8266, join its Wi-Fi hotspot <b>DairySense</b>, then connect. The real DHT11 will drive this twin's shed climate, and the twin's pump logic will switch the real pump through the L293D.</p>
+    <label>Device address <input id="liveAddr" value="192.168.4.1" spellcheck="false"></label>
+    <p id="liveStatus" class="muted">Not connected. The farm is running on simulated sensors.</p>
+    <div class="row"><button id="liveConnect" class="primary">Connect</button><button id="liveDisconnect">Disconnect</button><button id="liveClose">Close</button></div>
+  </div>
+</div>
+
+<!-- Landing: the farm opens asleep before dawn; src/landing.js wakes it up and offers the ways in. -->
+<div id="splash" class="ld" data-state="asleep">
+  <div class="ld-veil" aria-hidden="true"></div>
+  <div class="ld-shade" aria-hidden="true"></div>
+
+  <header class="ld-top">
+    <div class="ld-brand"><span id="ldMark" class="ld-mark" aria-hidden="true"></span><div><b>Dairy Sense</b><small>Sustainable Smart Dairy Farm</small></div></div>
+    <div class="ld-tools">
+      <button id="ldReplay" type="button" class="ld-chip" data-show="awake" title="Back to 5 a.m. and wake the farm again">Replay sunrise</button>
+      <button id="ldPhone" type="button" class="ld-chip" aria-expanded="false" aria-controls="ldQr" hidden>Open on your phone</button>
+      <button id="ldFull" type="button" class="ld-chip" title="Full screen (best for presenting)">Full screen</button>
+      <div class="ld-clock" title="Time on the farm"><i id="ldSun" class="ld-sun moon" aria-hidden="true"></i><b id="ldTime">05:09</b><small id="ldPhase">before sunrise</small></div>
+    </div>
+  </header>
+
+  <div id="ldQr" class="ld-qr" hidden>
+    <div id="ldQrCode" class="ld-qr-code"></div>
+    <div><b>Take the farm with you</b><p>Scan with a phone camera to open this live farm on your phone.</p><code id="ldQrUrl"></code></div>
+  </div>
+
+  <main class="ld-panel">
+    <p class="ld-eyebrow">Science project &middot; National Milk Day 2026</p>
+    <h1 id="ldTitle" class="ld-title">The farm is asleep.</h1>
+    <p id="ldLead" class="ld-lead">Five animals, a solar panel, a biogas digester and a shed full of sensors, all running live in 3D. Wake it up and watch every system come online.</p>
+
+    <div class="ld-wake" data-show="asleep">
+      <button id="ldWake" type="button" class="ld-power" disabled>
+        <span class="ld-power-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v8"/><path d="M6.4 6.6a8 8 0 1 0 11.2 0"/></svg></span>
+        <span id="ldWakeLabel">Getting the farm ready&hellip;</span>
+      </button>
+      <button type="button" class="ld-skip" data-skip disabled>Skip to the menu</button>
+      <p class="ld-hint">Enter wakes the farm &middot; Esc skips &middot; drag the board to look around</p>
+    </div>
+
+    <div class="ld-boot" data-show="waking">
+      <ol id="ldLog" class="ld-log" aria-live="polite"></ol>
+      <div class="ld-progress" aria-hidden="true"><i id="ldBar"></i></div>
+      <button type="button" class="ld-skip" data-skip disabled>Skip</button>
+    </div>
+
+    <div class="ld-pulse" data-show="awake" aria-label="Live farm readings">
+      <div><b id="lpClock">--:--</b><small id="lpDay">Day 1</small></div>
+      <div><b id="lpMilk">--</b><small>milk today</small></div>
+      <div><b id="lpSolar">--</b><small>solar now</small></div>
+      <div><b id="lpBat">--</b><small>battery</small></div>
+      <div id="lpHerdCell"><b id="lpHerd">--</b><small>herd healthy</small></div>
+    </div>
+
+    <nav class="ld-doors" data-show="awake" aria-label="Ways into the farm">
+      <button id="startTour" type="button" class="ld-door ld-door--main">
+        <span class="ld-door-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg></span>
+        <span><b>Start the guided tour</b><small id="ldTourMeta">Every system, one stop at a time</small></span>
+      </button>
+      <button id="startFree" type="button" class="ld-door">
+        <span class="ld-door-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span>
+        <span><b>Explore freely</b><small>Change the weather, switch the pump, give a cow a fever</small></span>
+      </button>
+      <a class="ld-door" href="journey.html">
+        <span class="ld-door-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18c3-1 4-4 7-4s4 3 9 2"/><circle cx="7" cy="8" r="1.6"/><circle cx="12" cy="6" r="1.6"/><circle cx="17" cy="9" r="1.6"/></svg></span>
+        <span><b>A day with Gauri</b><small>Scroll through one whole farm day with one cow</small></span>
+      </a>
+      <a class="ld-door" href="docs.html">
+        <span class="ld-door-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h9l5 5v11H5z"/><path d="M14 4v5h5"/><path d="M8.5 13h7M8.5 16.5h5"/></svg></span>
+        <span><b>How it is built</b><small>Sensors, wiring, ESP8266 code and viva questions</small></span>
+      </a>
+    </nav>
+
+    <div class="ld-herd" data-show="awake">
+      <p>Or meet the herd: each one wears a smart health belt</p>
+      <div id="ldHerd"></div>
+    </div>
+  </main>
+
+  <footer class="ld-credits"><b>Presented by</b> Siddhi Keshari, Vaibhav Laxmi Pandey, Sakshi Devi, Tanu Yadav and Arya Gupta <span>&middot;</span> United University, Prayagraj</footer>
+</div>
+<script src="dist/app.js"></script>
+</body>
+</html>

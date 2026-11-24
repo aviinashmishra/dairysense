@@ -1,0 +1,30 @@
+{
+  "name": "dairy-sense-web",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dairy Sense - a living 3D digital twin of a Sustainable Smart Dairy Farm (Next.js app)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node test/sim.test.mjs",
+    "mock-device": "node ../firmware/mock-device.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.170.0",
+    "typescript": "^7.0.2"
+  }
+}
